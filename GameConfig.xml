@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GameConfig>
+	<Game>
+		<ColorNum>5</ColorNum>
+		<SkittleNum>10</SkittleNum>
+	</Game>
+
+	<Player>
+		<Class>skittles.dumpplayer.DumpPlayer</Class>
+		<Happiness>random,5</Happiness>
+		<InHand>random</InHand>
+	</Player>
+	<Player>
+		<Class>skittles.dumpplayer.DumpPlayer</Class>
+		<Happiness>random,5</Happiness>
+		<InHand>random</InHand>
+	</Player>
+	<Player>
+		<Class>skittles.dumpplayer.DumpPlayer</Class>
+		<Happiness>random,5</Happiness>
+		<InHand>random</InHand>
+	</Player>
+</GameConfig>
