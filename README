@@ -3,11 +3,11 @@
 2. 10/29/2011
 Generated player file g4FatKid.java
 
-2.1 Initial strtegy:
+2.1 Initial strategy:
 
 2.1.1 Eating:
-first few guesses try to find best value ie taste one of each one and priritize based on amount of skittles we have
-start eating skittles and after knowing things pick thressholds for liking and not liking
+first few guesses try to find best value i.e. taste one of each one and prioritize based on amount of skittles we have
+start eating skittles and after knowing things pick thresholds for liking and not liking
 empty trade in earlier rounds to not loose out on anything
 
 *Largest skittle set order to taste the skittles in n rounds
