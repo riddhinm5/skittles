@@ -135,14 +135,19 @@ public class PlayerStatus
 
 	public boolean checkCanEat(int[] aintTempEat) 
 	{
+		boolean blnEatAtLeastOne = false;
 		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
 		{
+			if ( aintTempEat[ intColorIndex ] > 0 )
+			{
+				blnEatAtLeastOne = true;
+			}
 			if ( aintTempEat[ intColorIndex ] > aintInHand[ intColorIndex ] || aintTempEat[ intColorIndex ] < 0 )
 			{
 				return false;
 			}
 		}
-		return true;
+		return blnEatAtLeastOne;
 	}
 
 	public boolean checkEnoughInHand( int[] aintToUse ) 

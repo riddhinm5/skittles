@@ -35,8 +35,7 @@ public class ManualP extends Player
 		dblHappiness = 0;
 	}
 
-	@Override
-	public void eatAndOffer(int[] aintTempEat, Offer offTemp) 
+	public void eat( int[] aintTempEat )
 	{
 		// let the manual player know what's in hand
 		System.out.println( "Player #" + intPlayerIndex + " (" + strClassName + "), You have: " + Game.arrayToString( aintInHand ) );
@@ -46,16 +45,6 @@ public class ManualP extends Player
 		System.out.println( "What do you eat? (" + intColorNum + " colors)" );
 		String strEat = Game.scnInput.nextLine();
 		String[] astrEat = strEat.split( "," );
-		System.out.println( "What do you offer? (" + intColorNum + " colors)" );
-		String strOffer = Game.scnInput.nextLine();
-		String[] astrOffer = strOffer.split( "," );
-		System.out.println( "What do you desire? (" + intColorNum + " colors)" );
-		String strDesire = Game.scnInput.nextLine();
-		String[] astrDesire = strDesire.split( "," );
-		
-		int[] aintTempOffer = new int[ intColorNum ];
-		int[] aintTempDesire = new int[ intColorNum ];
-		
 		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
 		{
 			int intEatCurrentColorNum = Integer.parseInt( astrEat[ intColorIndex ] );
@@ -68,12 +57,29 @@ public class ManualP extends Player
 				aintInHand[ intColorIndex ] -= intEatCurrentColorNum;
 			}
 			aintTempEat[ intColorIndex ] = intEatCurrentColorNum;
+		}
+	}
+	
+	public void offer( Offer offTemp )
+	{
+		System.out.println( "What do you offer? (" + intColorNum + " colors)" );
+		String strOffer = Game.scnInput.nextLine();
+		String[] astrOffer = strOffer.split( "," );
+		System.out.println( "What do you desire? (" + intColorNum + " colors)" );
+		String strDesire = Game.scnInput.nextLine();
+		String[] astrDesire = strDesire.split( "," );
+		
+		int[] aintTempOffer = new int[ intColorNum ];
+		int[] aintTempDesire = new int[ intColorNum ];
+		
+		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+		{
 			aintTempOffer[ intColorIndex ] = Integer.parseInt( astrOffer[ intColorIndex ] );
 			aintTempDesire[ intColorIndex ] = Integer.parseInt( astrDesire[ intColorIndex ] );
 		}
 		offTemp.setOffer( aintTempOffer, aintTempDesire );
 	}
-
+	
 	@Override
 	public void syncInHand(int[] aintInHand) 
 	{

@@ -22,7 +22,7 @@ public class DumpPlayer extends Player
 //	}
 
 	@Override
-	public void eatAndOffer(int[] aintTempEat, Offer offTemp) 
+	public void eat( int[] aintTempEat )
 	{
 		int intMaxColorIndex = -1;
 		int intMaxColorNum = 0;
@@ -38,9 +38,13 @@ public class DumpPlayer extends Player
 		aintInHand[ intMaxColorIndex ] = 0;
 		intLastEatIndex = intMaxColorIndex;
 		intLastEatNum = intMaxColorNum;
-		
-		intMaxColorIndex = 0;
-		intMaxColorNum = 0;
+	}
+	
+	@Override
+	public void offer( Offer offTemp )
+	{
+		int intMaxColorIndex = 0;
+		int intMaxColorNum = 0;
 		int intMinColorIndex = 0;
 		int intMinColorNum = Integer.MAX_VALUE;
 		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )

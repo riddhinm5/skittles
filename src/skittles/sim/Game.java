@@ -259,7 +259,7 @@ public class Game
 				alCurrentOffers.add( offTemp );
 				continue;
 			}
-			aplyPlayers[ intPlayerIndex ].eatAndOffer( aintTempEat, offTemp );
+			aplyPlayers[ intPlayerIndex ].eat( aintTempEat );
 			// process eat
 			if ( aplsPlayerStatus[ intPlayerIndex ].checkCanEat( aintTempEat ) )
 			{
@@ -272,6 +272,7 @@ public class Game
 				System.out.println( "Player #" + intPlayerIndex + ": You cannot eat these. Take them out of your mouth!" );
 			}
 			// process offer
+			aplyPlayers[ intPlayerIndex ].offer( offTemp );
 			if ( aplsPlayerStatus[ intPlayerIndex ].checkValidOffer( offTemp ) )
 			{
 				alCurrentOffers.add( offTemp );
