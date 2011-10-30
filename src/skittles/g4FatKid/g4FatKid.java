@@ -131,31 +131,40 @@ public class G4FatKid extends Player{
 		if (verbose) {
 			// print the rankings of the colors
 			prefs.printRanks();
+			// print the median happiness color
+			System.out.println("Median color is " + prefs.getMedian());
 		}
 	}
 
 	@Override
 	public Offer pickOffer(Offer[] aoffCurrentOffers) {
-		// TODO Auto-generated method stub
+		
 		Offer offReturn = null;
-		for ( Offer offTemp : aoffCurrentOffers )
-		{
+		for ( Offer offTemp : aoffCurrentOffers ) {
 			if ( offTemp.getOfferedByIndex() == intPlayerIndex || offTemp.getOfferLive() == false )
 				continue;
-			int[] aintDesire = offTemp.getDesire();
-			if ( checkEnoughInHand( aintDesire ) )
-			{
+			int[] skittlesLost = offTemp.getDesire();
+			// first, check if we can even fulfill the offer
+			if ( checkEnoughInHand( skittlesLost ) ) {
 				offReturn = offTemp;
-				aintDesire = offReturn.getDesire();
-				int[] aintOffer = offReturn.getOffer();
-				for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
-				{
-					aintInHand[ intColorIndex ] += aintOffer[ intColorIndex ] - aintDesire[ intColorIndex ];
+				int[] skittlesGained = offReturn.getOffer();
+				if (prefs.goodOffer(skittlesLost, skittlesGained)) {
+					for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+					{
+						aintInHand[ intColorIndex ] += skittlesGained[ intColorIndex ] - skittlesLost[ intColorIndex ];
+					}
+					break;
 				}
-				break;
+				else continue;
 			}
 		}
-
+		if (verbose) {
+			if (offReturn != null) {
+				System.out.println("Offer taken");
+			}
+		}
+		// TODO instead of taking first "good" offer, make array of good offers, then take the best of these
+		
 		return offReturn;
 	}
 
