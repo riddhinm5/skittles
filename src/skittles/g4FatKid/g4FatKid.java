@@ -2,6 +2,7 @@ package skittles.g4FatKid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 
 import skittles.sim.*;
 
@@ -19,12 +20,17 @@ public class g4FatKid extends Player{
 	private eatStrategy es;
 	private List<Integer> whatILikeMost;
 	private String whatToEatNext;
+	private SortedMap<Integer, Double> whatILikeMostScore;
 	//private List<Double> whatILikeMost;
+	int turn = 0;
 	
 	@Override
 	public void eat(int[] aintTempEat) {
 		// TODO Auto-generated method stub
-		whatToEatNext = es.eatNow();
+		if(turn == 0)
+			whatToEatNext = es.eatNow(0);
+		else
+			whatToEatNext = es.eatNow(intLastEatIndex);
 		String[] whichSkittle = whatToEatNext.split(" ");
 		int skittleColor = Integer.parseInt(whichSkittle[0]);
 		int numSkittles = Integer.parseInt(whichSkittle[1]);
@@ -32,6 +38,7 @@ public class g4FatKid extends Player{
 		aintInHand[ skittleColor ] -= numSkittles;
 		intLastEatIndex = skittleColor;
 		intLastEatNum = numSkittles;
+		turn++;
 	}
 
 	@Override
@@ -49,13 +56,44 @@ public class g4FatKid extends Player{
 	@Override
 	public void happier(double dblHappinessUp) {
 		// TODO Auto-generated method stub
-		
+		double dblHappinessPerCandy = dblHappinessUp / Math.pow( intLastEatNum, 2 );
+		if ( adblTastes[ intLastEatIndex ] == -1 )
+		{
+			adblTastes[ intLastEatIndex ] = dblHappinessPerCandy;
+			whatILikeMostScore.put(intLastEatIndex, adblTastes[intLastEatIndex]);
+		}
+		else
+		{
+			if ( adblTastes[ intLastEatIndex ] != dblHappinessPerCandy )
+			{
+				System.out.println( "Error: Inconsistent color happiness!" );
+			}
+		}
 	}
 
 	@Override
 	public Offer pickOffer(Offer[] aoffCurrentOffers) {
 		// TODO Auto-generated method stub
-		return null;
+		Offer offReturn = null;
+		for ( Offer offTemp : aoffCurrentOffers )
+		{
+			if ( offTemp.getOfferedByIndex() == intPlayerIndex || offTemp.getOfferLive() == false )
+				continue;
+			int[] aintDesire = offTemp.getDesire();
+			if ( checkEnoughInHand( aintDesire ) )
+			{
+				offReturn = offTemp;
+				aintDesire = offReturn.getDesire();
+				int[] aintOffer = offReturn.getOffer();
+				for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+				{
+					aintInHand[ intColorIndex ] += aintOffer[ intColorIndex ] - aintDesire[ intColorIndex ];
+				}
+				break;
+			}
+		}
+
+		return offReturn;
 	}
 
 	@Override
@@ -83,7 +121,7 @@ public class g4FatKid extends Player{
 		{
 			adblTastes[ intColorIndex ] = -1;
 		}
-		es = new eatStrategy(aintInHand,intColorNum,whatILikeMost,intLastEatIndex);	
+		es = new eatStrategy(aintInHand,intColorNum,whatILikeMostScore);	
 	}
 
 	@Override
@@ -98,6 +136,17 @@ public class g4FatKid extends Player{
 		return 0;
 	}
 	
+	private boolean checkEnoughInHand( int[] aintTryToUse )
+	{
+		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+		{
+			if ( aintTryToUse[ intColorIndex ] > aintInHand[ intColorIndex ] )
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	//Todo: 
 	
 }
