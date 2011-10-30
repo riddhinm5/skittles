@@ -2,7 +2,7 @@ package skittles.g4FatKid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
+import java.util.*;
 
 import skittles.sim.*;
 
@@ -27,10 +27,13 @@ public class G4FatKid extends Player{
 	// Market tracks the total volume of all trades
 	private Market market;
 	
+	// PreferredColors is a ranking of the colors we like
+	private PreferredColors prefs;
+	
 	// stuff for EatStrategy
 	private EatStrategy es;
 	private String whatToEatNext;
-	private SortedMap<Integer, Double> whatILikeMostScore;
+	private SortedMap<Integer, Double> preferredColors;
 	int turn = 0;
 	
 	@Override
@@ -71,7 +74,8 @@ public class G4FatKid extends Player{
 	@Override
 	public void offer(Offer offTemp) {
 		
-		// what is desired: first match between WhatILikeMostScore (from top down) and rankings from Market
+		// what is desired: first match between adblTastes; (from top down) and rankings from Market
+		
 		
 		// what is offered: first match between WhatILikeMostScore (from bottom up) and rankings from Market
 		
@@ -84,12 +88,13 @@ public class G4FatKid extends Player{
 	}
 
 	@Override
-	public void happier(double dblHappinessUp) 
-	{
+	public void happier(double dblHappinessUp) {
 		double dblHappinessPerCandy = dblHappinessUp / Math.pow( intLastEatNum, 2 );
 		if ( adblTastes[ intLastEatIndex ] == -1 )
 		{
 			adblTastes[ intLastEatIndex ] = dblHappinessPerCandy;
+			// update ranks in adblTastRanks (takes n^2 time)
+			prefs.rerank(adblTastes);
 		}
 		else
 		{
@@ -97,25 +102,13 @@ public class G4FatKid extends Player{
 			{
 				System.out.println( "Error: Inconsistent color happiness!" );
 			}
+		}
+		
+		if (verbose) {
+			// print the rankings of the colors
+			prefs.printRanks();
 		}
 	}
-	/*
-	public void happier(double dblHappinessUp) {
-		// TODO Auto-generated method stub
-		double dblHappinessPerCandy = dblHappinessUp / Math.pow( intLastEatNum, 2 );
-		if ( adblTastes[ intLastEatIndex ] == -1 )
-		{
-			adblTastes[ intLastEatIndex ] = dblHappinessPerCandy;
-			whatILikeMostScore.put(intLastEatIndex, adblTastes[intLastEatIndex]);
-		}
-		else
-		{
-			if ( adblTastes[ intLastEatIndex ] != dblHappinessPerCandy )
-			{
-				System.out.println( "Error: Inconsistent color happiness!" );
-			}
-		}
-	}*/
 
 	@Override
 	public Offer pickOffer(Offer[] aoffCurrentOffers) {
@@ -192,8 +185,11 @@ public class G4FatKid extends Player{
 			adblTastes[ intColorIndex ] = -1;
 		}
 		
+		// create PreferredColors object
+		prefs = new PreferredColors(intColorNum);
+		
 		// create EatStrategy object
-		es = new EatStrategy(aintInHand, intColorNum, whatILikeMostScore);
+		es = new EatStrategy(aintInHand, intColorNum, preferredColors);
 		
 		// create PlayerProfile object; hard-coding 5 for number of Players
 		// will change this to number of players when we find out how to get this value from the

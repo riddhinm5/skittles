@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import skittles.sim.*;
-
 class EatStrategy{
 	private int[] aintInHand;
 	private int intColorNum;
 /*	//double dblHappiness;
 	//String strClassName;
 	//int intPlayerIndex;*/
-	private double aproxDist;
+	private double approxDist;
 	private double[] adblTastes;
 	private int intLastEatIndex;
 	private int intLastEatNum;
@@ -20,12 +18,12 @@ class EatStrategy{
 	private int likeMostInitCount = 0;
 	private SortedMap<Integer, Double> whatILikeMostScore;
 	
-	EatStrategy(int[] aintInHand, int intColorNum, SortedMap<Integer, Double> whatILikeMostScore){	
+	public EatStrategy(int[] aintInHand, int intColorNum, SortedMap<Integer, Double> whatILikeMostScore) {	
 		this.aintInHand = aintInHand;
 		this.intColorNum = intColorNum;
 		this.whatILikeMostScore = whatILikeMostScore;
 		//this.intLastEatIndex = intLastEatIndex;
-		aproxDist = 1/aintInHand.length;
+		approxDist = 1/aintInHand.length;
 		likeMostInitCount = aintInHand[0];
 	}
 	
