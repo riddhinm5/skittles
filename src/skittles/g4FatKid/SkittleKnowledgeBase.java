@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 public class SkittleKnowledgeBase {
+	/*
+	 * this class is deprecated
 	private int skittleID;
 	private int skittleRank;
 	private double skittleHappiness;
@@ -18,5 +20,5 @@ public class SkittleKnowledgeBase {
 	public SkittleKnowledgeBase() {
 		// TODO Auto-generated constructor stub
 	}
-
+	*/
 }

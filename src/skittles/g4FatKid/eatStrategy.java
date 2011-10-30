@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import skittles.sim.*;
-
-class eatStrategy{
+class EatStrategy{
 	private int[] aintInHand;
 	private int intColorNum;
 /*	//double dblHappiness;
 	//String strClassName;
 	//int intPlayerIndex;*/
-	private double aproxDist;
+	private double approxDist;
 	private double[] adblTastes;
 	private int intLastEatIndex;
 	private int intLastEatNum;
@@ -20,18 +18,18 @@ class eatStrategy{
 	private int likeMostInitCount = 0;
 	private SortedMap<Integer, Double> whatILikeMostScore;
 	
-	eatStrategy(int[] aintInHand, int intColorNum, SortedMap<Integer, Double> whatILikeMostScore){	
+	public EatStrategy(int[] aintInHand, int intColorNum, SortedMap<Integer, Double> whatILikeMostScore) {	
 		this.aintInHand = aintInHand;
 		this.intColorNum = intColorNum;
 		this.whatILikeMostScore = whatILikeMostScore;
 		//this.intLastEatIndex = intLastEatIndex;
-		aproxDist = 1/aintInHand.length;
+		approxDist = 1/aintInHand.length;
 		likeMostInitCount = aintInHand[0];
 	}
 	
 	public String eatNow(int intLastEatIndex){
 		String whatToEatNow = "";
-		int i=1;
+		int i = 1;
 		int max = 0;
 		this.intLastEatIndex = intLastEatIndex;
 		if(intLastEatIndex == 0)
@@ -42,7 +40,7 @@ class eatStrategy{
 				intLastEatIndex = max;
 			}
 		if (intLastEatIndex+1 < aintInHand.length){
-			whatToEatNow = (intLastEatIndex+1)+" "+1+"";
+			whatToEatNow = (intLastEatIndex+1) + " " + 1 + "";
 			intLastEatIndex += 1;
 		}
 		else if(aintInHand[Integer.parseInt(whatILikeMostScore.get(1)+"")] == 2/3*(Double.parseDouble(likeMostInitCount+"")))
