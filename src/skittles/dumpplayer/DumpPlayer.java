@@ -14,6 +14,7 @@ public class DumpPlayer extends Player
 	private int intLastEatIndex;
 	private int intLastEatNum;
 	
+	
 //	public DumpPlayer( int[] aintInHand )
 //	{
 //		this.aintInHand = aintInHand;

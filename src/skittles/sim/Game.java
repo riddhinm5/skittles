@@ -26,6 +26,12 @@ public class Game
 	
 	public static Scanner scnInput = new Scanner( System.in );
 	
+	
+	/*
+	* Initailizes everything including total number of skittles in hand and number of colors.
+	 * imp variables: intColorNum, intTotalNum, alPlayers, alPlayerStatus
+	 * also assigns random distribution of skittles based on xml 
+	 */
 	public Game( String strXMLPath )
 	{
 		DocumentBuilderFactory dbfGameConfig = DocumentBuilderFactory.newInstance();
@@ -56,8 +62,8 @@ public class Game
 				//get the employee element
 				Element elmGame = (Element) ndlGame.item(i);
 				//retrieve player information
-				intColorNum = Integer.parseInt( getTagValue( elmGame, "ColorNum" ) );
-				intTotalNum = Integer.parseInt( getTagValue( elmGame, "SkittleNum" ) );	
+				intColorNum = Integer.parseInt( getTagValue( elmGame, "ColorNum" ) ); //## total number of colors of skitltes in hand
+				intTotalNum = Integer.parseInt( getTagValue( elmGame, "SkittleNum" ) );	 //## total number of skittles in hand
 			}
 		}
 		// initialize players
@@ -143,6 +149,9 @@ public class Game
 		aplsPlayerStatus = alPlayerStatus.toArray( new PlayerStatus[ 0 ] );	
 	}
 	
+	/*
+	* assigns random like scores imp var: adblRandomTastes
+	*/
 	private double[] randomTastes(double dblMean) 
 	{
 		double[] adblRandomTastes = new double[ intColorNum ];
@@ -159,10 +168,13 @@ public class Game
 		return adblRandomTastes;
 	}
 
+/*
+ 	* distribution of skittles in hand imp var: aintRandomInHand
+ */
 	private int[] randomInHand(int intTotalNum) 
 	{
-		int[] aintRandomInHand = new int[ intColorNum ];
-		Random rdmTemp = new Random();
+		int[] aintRandomInHand = new int[ intColorNum ]; //distribution of skittles in hand ie number of skittles of each no
+		Random rdmTemp = new Random(); 
 		int[] aintTemp = new int[ intColorNum + 1 ];
 		aintTemp[ intColorNum ] = intTotalNum;
 		for ( int intColorIndex = 1; intColorIndex < intColorNum; intColorIndex ++ )
@@ -180,6 +192,9 @@ public class Game
 		return aintRandomInHand;
 	}
 
+	/*
+	 * ?? dunno?? doesnt look imp
+	 */
 	private String getTagValue( Element elmPlayer, String strTagName )
 	{
 		String strValue = null;
