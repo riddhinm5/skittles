@@ -1,1 +1,29 @@
 1. meeting next on friday 3:00 PM good??
+
+2. 10/29/2011
+Generated player file g4FatKid.java
+
+2.1 Initial strtegy:
+
+2.1.1 Eating:
+first few guesses try to find best value ie taste one of each one and priritize based on amount of skittles we have
+start eating skittles and after knowing things pick thressholds for liking and not liking
+empty trade in earlier rounds to not loose out on anything
+
+*Largest skittle set order to taste the skittles in n rounds
+
+*keep a knowledge base maintain which skittle is most valuable
+*and update with turn
+*each turn eat the lowest of the +ve score (median score)
+
+2.2 Picking offer:
+currently using dumb player code
+
+2.3 Making offer:
+above median --> below median
+matrix for demand for each player (nXn matrix 'n' being the number of color)
+if -ve always tradeout
+
+2.4 Eat all:
+
+when to eat all of your skittles??
