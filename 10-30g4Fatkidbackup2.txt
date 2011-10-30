@@ -122,7 +122,6 @@ public class g4FatKid extends Player{
 			adblTastes[ intColorIndex ] = -1;
 		}
 		es = new eatStrategy(aintInHand,intColorNum,whatILikeMostScore);	
-		System.out.println("FatKid starts");
 	}
 
 	@Override
