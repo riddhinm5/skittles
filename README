@@ -27,3 +27,29 @@ if -ve always tradeout
 2.4 Eat all:
 
 when to eat all of your skittles??
+
+
+30/10/2011
+
+a) Get a working model for tomorrow ..
+b) Things we need to look at in the future
+
+1) While making an offer ...we need to look up every player also in order to check if our offer is possible in the first place ...
+For example : if what we request for our top priority skittle isn't possible , we should go for the next lowest skittle in a manner that we still
+maximize the number of top priority skittles that are possible ...
+We wouldn't want an offer to go waste ..
+
+2) While eating : We need to come up with a mathematical inference engine so as to prevent us from eating those last few unknown skittles because they 
+could boost our score by a huge margin when exchanged for a top priority skittle in the end ..
+example : our score could go from 25 to 36 in the end by that one skittle and that could win the game...
+
+strictly implementation wise
+3) As of now ..no performance constraint as was the case in the previous two games ..
+there could be a max of 3-4 players per game ..so even we do perform a look up for every player ..shouldn't be an issue ..
+however ...we should typically aim to centralize our knowledge base so that we can avoid making multiple lookups ..
+
+4) Coding conventions
+
+let's follow camel case conventions for java..
+Class names beginning with uppercase and variable names and function names beginning with lower case..
+and maybe meaningful names too 
