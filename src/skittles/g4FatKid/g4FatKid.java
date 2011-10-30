@@ -6,7 +6,7 @@ import java.util.SortedMap;
 
 import skittles.sim.*;
 
-public class g4FatKid extends Player{
+public class G4FatKid extends Player{
 
 	private int[] aintInHand;
 	private int intColorNum;
@@ -17,17 +17,44 @@ public class g4FatKid extends Player{
 	private double[] adblTastes;
 	private int intLastEatIndex;
 	private int intLastEatNum;
-	private eatStrategy es;
-	private List<Integer> whatILikeMost;
+	
+	// set verbose to false to suppress output of debug statements
+	boolean verbose = true;
+	
+	// PlayerProfiles tracks net changes to all players
+	private PlayerProfiles opponentProfiles;
+	
+	// Market tracks the total volume of all trades
+	private Market market;
+	
+	// stuff for EatStrategy
+	private EatStrategy es;
 	private String whatToEatNext;
 	private SortedMap<Integer, Double> whatILikeMostScore;
-	//private List<Double> whatILikeMost;
 	int turn = 0;
 	
 	@Override
+	public void eat( int[] aintTempEat )
+	{
+		int intMaxColorIndex = -1;
+		int intMaxColorNum = 0;
+		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+		{
+			if ( aintInHand[ intColorIndex ] > intMaxColorNum )
+			{
+				intMaxColorNum = aintInHand[ intColorIndex ];
+				intMaxColorIndex = intColorIndex;
+			}
+		}
+		aintTempEat[ intMaxColorIndex ] = intMaxColorNum;
+		aintInHand[ intMaxColorIndex ] = 0;
+		intLastEatIndex = intMaxColorIndex;
+		intLastEatNum = intMaxColorNum;
+	}
+	/*
 	public void eat(int[] aintTempEat) {
-		// TODO Auto-generated method stub
-		if(turn == 0)
+		
+		if (turn == 0)
 			whatToEatNext = es.eatNow(0);
 		else
 			whatToEatNext = es.eatNow(intLastEatIndex);
@@ -39,11 +66,14 @@ public class g4FatKid extends Player{
 		intLastEatIndex = skittleColor;
 		intLastEatNum = numSkittles;
 		turn++;
-	}
+	}*/
 
 	@Override
 	public void offer(Offer offTemp) {
-		// TODO Auto-generated method stub
+		
+		// what is desired: first match between WhatILikeMostScore (from top down) and rankings from Market
+		
+		// what is offered: first match between WhatILikeMostScore (from bottom up) and rankings from Market
 		
 	}
 
@@ -54,6 +84,22 @@ public class g4FatKid extends Player{
 	}
 
 	@Override
+	public void happier(double dblHappinessUp) 
+	{
+		double dblHappinessPerCandy = dblHappinessUp / Math.pow( intLastEatNum, 2 );
+		if ( adblTastes[ intLastEatIndex ] == -1 )
+		{
+			adblTastes[ intLastEatIndex ] = dblHappinessPerCandy;
+		}
+		else
+		{
+			if ( adblTastes[ intLastEatIndex ] != dblHappinessPerCandy )
+			{
+				System.out.println( "Error: Inconsistent color happiness!" );
+			}
+		}
+	}
+	/*
 	public void happier(double dblHappinessUp) {
 		// TODO Auto-generated method stub
 		double dblHappinessPerCandy = dblHappinessUp / Math.pow( intLastEatNum, 2 );
@@ -69,7 +115,7 @@ public class g4FatKid extends Player{
 				System.out.println( "Error: Inconsistent color happiness!" );
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public Offer pickOffer(Offer[] aoffCurrentOffers) {
@@ -104,9 +150,33 @@ public class g4FatKid extends Player{
 
 	@Override
 	public void updateOfferExe(Offer[] aoffCurrentOffers) {
-		// TODO Auto-generated method stub
 		
-	}
+		// update opponentProfiles with the new transactions
+		for ( Offer offTemp : aoffCurrentOffers ) {
+			
+			if ( offTemp.getPickedByIndex() != -1 )
+			{
+				int[] aintTempOffer = offTemp.getOffer();
+				int[] aintTempDesire = offTemp.getDesire();
+				// update the offerer and accepter's profiles (note the switched arguments)
+				opponentProfiles.updatePlayer(offTemp.getOfferedByIndex(), aintTempOffer, aintTempDesire);
+				opponentProfiles.updatePlayer(offTemp.getPickedByIndex(), aintTempDesire, aintTempOffer);
+			}
+		}
+		
+		if (verbose) {
+			System.out.println("Net changes for all players:");
+			opponentProfiles.printProfiles();
+		}
+		
+		// update market
+		market.updateTrades(opponentProfiles);
+		if (verbose) {
+			market.printVolumeTable();
+			market.printRankings();
+		}
+		
+	}	
 
 	@Override
 	public void initialize(int intPlayerIndex, String strClassName,int[] aintInHand) {
@@ -117,23 +187,32 @@ public class g4FatKid extends Player{
 		intColorNum = aintInHand.length;
 		dblHappiness = 0;
 		adblTastes = new double[ intColorNum ];
-		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
-		{
+		
+		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ ) {
 			adblTastes[ intColorIndex ] = -1;
 		}
-		es = new eatStrategy(aintInHand,intColorNum,whatILikeMostScore);	
+		
+		// create EatStrategy object
+		es = new EatStrategy(aintInHand, intColorNum, whatILikeMostScore);
+		
+		// create PlayerProfile object; hard-coding 5 for number of Players
+		// will change this to number of players when we find out how to get this value from the
+		// simulator.  For now, this will work for any number of players less than 10
+		opponentProfiles = new PlayerProfiles(5, intColorNum);
+		
+		// create Market object
+		market = new Market(intColorNum);
+		
 	}
 
 	@Override
 	public String getClassName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "g4FatKid";
 	}
 
 	@Override
 	public int getPlayerIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		return intPlayerIndex;
 	}
 	
 	private boolean checkEnoughInHand( int[] aintTryToUse )
@@ -147,6 +226,5 @@ public class g4FatKid extends Player{
 		}
 		return true;
 	}
-	//Todo: 
 	
 }
