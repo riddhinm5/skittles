@@ -3,6 +3,7 @@ package skittles.g4FatKid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
+import java.lang.Math;
 
 import skittles.sim.*;
 
@@ -74,10 +75,33 @@ public class G4FatKid extends Player{
 	@Override
 	public void offer(Offer offTemp) {
 		
-		// what is desired: first match between adblTastes; (from top down) and rankings from Market
+		// what is desired: first match between personal prefs (from top down) and rankings from Market
+		// desirability = (personal rank of color x) + (market volume rank of color x)
+		// will take color with minimum value
+		int mostDesired = Integer.MIN_VALUE;
+		for (int i = 0; i < intColorNum; i++) {
+			int temp = prefs.getColorAtRank(i) + market.getColorAtRank(i);
+			if (temp > mostDesired) mostDesired = i;
+		}
 		
+		// what is offered: first match between personal prefs (from bottom up) and rankings from Market
+		int mostUndesired = Integer.MIN_VALUE;
+		for (int i = 0; i < intColorNum; i++) {
+			int temp = prefs.getColorAtRank(intColorNum-i-1) + market.getColorAtRank(i);
+			if (temp > mostUndesired && mostUndesired != mostDesired) mostUndesired = i;
+		}
 		
-		// what is offered: first match between WhatILikeMostScore (from bottom up) and rankings from Market
+		// trade as many Undesired color as possible (at most 4) for Desired color
+		int amountToTrade = Math.min(aintInHand[ mostUndesired ], 4);
+		int[] aintOffer = new int[ intColorNum ];
+		int[] aintDesire = new int[ intColorNum ];
+		for (int i = 0; i < intColorNum; i++) {
+			aintOffer[i] = 0;
+			aintDesire[i] = 0;
+			if (mostDesired == i) aintDesire[i] = amountToTrade;
+			if (mostUndesired == i) aintOffer[i] = amountToTrade;
+		}
+		offTemp.setOffer( aintOffer, aintDesire );
 		
 	}
 

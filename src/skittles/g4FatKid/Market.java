@@ -42,7 +42,7 @@ public class Market {
 	/*
 	 * takes rank as input, returns the color with that rank
 	 */
-	public int getColorWithRank(int rank) {
+	public int getColorAtRank(int rank) {
 		return rankingArray[rank];
 	}
 	
