@@ -18,7 +18,6 @@ public class G4FatKid extends Player{
 	private double[] adblTastes;
 	private int intLastEatIndex;
 	private int intLastEatNum;
-	eatStrategy es;
 	// set verbose to false to suppress output of debug statements
 	boolean verbose = true;
 	
@@ -217,8 +216,10 @@ public class G4FatKid extends Player{
 		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ ) {
 			adblTastes[ intColorIndex ] = -1;
 		}
-		es = new eatStrategy(aintInHand,intColorNum,whatILikeMostScore);	
-		System.out.println("FatKid starts");
+		
+		if (verbose) {
+			System.out.println("FatKid starts");
+		}
 		
 		// create PreferredColors object
 		prefs = new PreferredColors(intColorNum);
@@ -233,8 +234,6 @@ public class G4FatKid extends Player{
 		
 		// create Market object
 		market = new Market(intColorNum);
-		
->>>>>>> bcc24950fc6dedf0c2feef621cb2fbdb239a9ca4
 	}
 
 	@Override
