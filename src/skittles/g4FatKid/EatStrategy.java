@@ -6,7 +6,7 @@ class EatStrategy{
 	private int intColorNum;
 	private int intLastEatIndex;
 	
-	int i = 0;
+	int rounds = 0;
 
 	PreferredColors prefs;
 	double initSkittleNum = 0;
@@ -69,7 +69,7 @@ class EatStrategy{
 		// this phase goes until only one color is left
 		// TODO change to a better criteria for ending phase 2
 		
-		else if (i <= 2*initSkittleNum) {
+		else if (rounds <= 2*initSkittleNum) {
 			intLastEatIndex = prefs.getLowestRankedColor();
 			while(aintInHand[intLastEatIndex] == 0) {
 				intLastEatIndex += 1;
@@ -78,7 +78,7 @@ class EatStrategy{
 			}	
 			whatToEatNow[0] = intLastEatIndex;
 			whatToEatNow[1] = 1;
-			i++;
+			rounds++;
 		}
 		else {
 			// after we're finished hoarding just eat all of one color together
@@ -90,7 +90,7 @@ class EatStrategy{
 			intLastEatIndex = min;
 			whatToEatNow[0] = intLastEatIndex;
 			whatToEatNow[1] = aintInHand[intLastEatIndex];
-			i++;
+			rounds++;
 		}
 		return whatToEatNow;
 	}
