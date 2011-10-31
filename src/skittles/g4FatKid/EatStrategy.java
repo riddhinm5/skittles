@@ -38,16 +38,14 @@ class EatStrategy{
 		int max = 0;
 		int min = 100;
 
-<<<<<<< HEAD
 		//Rounds to taste each of the skittles to check if we like them
 		if (i <= aintInHand.length){
 			for (j = 0; j < aintInHand.length; j++) {
-=======
+
 		// Rounds to taste each of the skittles to check if we like them
 		if (i != aintInHand.length) {
 			for (int j = 0; j < aintInHand.length; j++) {
->>>>>>> Beginning to rewrite EatStrategy
-				if (aintInHand[j] > max && !ateAlready.contains(j)) {
+				if (aintInHand[j] > max | !ateAlready.contains(j)) {
 					if (aintInHand[j] != 0) {
 						max = j;
 						ateAlready.add(max);
