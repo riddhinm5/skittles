@@ -138,22 +138,22 @@ class EatStrategy {
 			return false;
 	}
 
-	public boolean isTasteDataComplete(double[] tasteArray){
+	public boolean isTasteDataComplete(double[] tasteArray) {
 		for (int j = 0; j < tasteArray.length; j++) {
-			if(tasteArray[j]==-2 && skittleBalanceAray[j]>0){
+			if (tasteArray[j] == -2 && skittleBalanceAray[j] > 0) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public boolean isFinalStage(int[] skittleBalanceAray){
-		int counter=0;
-		for(int j=0; j<skittleBalanceAray.length;j++){
-			if(skittleBalanceAray[j]==0)
+	public boolean isFinalStage(int[] skittleBalanceAray) {
+		int counter = 0;
+		for (int j = 0; j < skittleBalanceAray.length; j++) {
+			if (skittleBalanceAray[j] == 0)
 				counter++;
 		}
-		if(counter==skittleBalanceAray.length-1)
+		if (counter == skittleBalanceAray.length - 1)
 			return true;
 		else
 			return false;

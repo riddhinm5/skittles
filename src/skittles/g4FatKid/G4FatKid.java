@@ -36,8 +36,7 @@ public class G4FatKid extends Player {
 	@Override
 	public void eat(int[] aintTempEat) {
 		
-		
-		whatToEatNext = eatStrategy.eatNow(tasteArray,skittleBalanceArray);
+		whatToEatNext = eatStrategy.eatNow(tasteArray, skittleBalanceArray);
 		String[] whichSkittle = whatToEatNext.split(" ");
 		int skittleColor = Integer.parseInt(whichSkittle[0]);
 		int numSkittles = Integer.parseInt(whichSkittle[1]);
