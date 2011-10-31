@@ -28,6 +28,7 @@ class EatStrategy{
 		for (int j = 0; j < aintInHand.length; j++)
 			initSkittleNum += aintInHand[j];
 		skittleNum = initSkittleNum;
+		colorTasted = new ArrayList<Integer>();
 	}
 
 	public void updatePrefs(PreferredColors prefs){
@@ -49,19 +50,27 @@ class EatStrategy{
 
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
-		if (!prefs.allPreferencesKnown()) {
+		int j;
+		if (!prefs.allPreferencesKnown() && rounds<aintInHand.length-1) {
 			// find color with smallest amount from the colors we still don't know
-			for (int j = 0; j < aintInHand.length; j++) {
+			for (j = 0; j < aintInHand.length; j++) {
 				// only if taste of color j is unknown
-				if(!colorTasted.contains(j)){
+				if(colorTasted.isEmpty() | !colorTasted.contains(j) && aintInHand[j] !=0){
 					intLastEatIndex = j;
 					whatToEatNow[intLastEatIndex] = 1;
 					colorTasted.add(j);
 					break;
-				}	
-			}
-		rounds++;
+				}
+				else if(aintInHand[j] == 0 && j==aintInHand.length-1)
+					for(int l=0;l<aintInHand.length;l++)
+						if(aintInHand[l] != 0){
+							intLastEatIndex = l;
+							whatToEatNow[l] = 1;
+							break;
+							}	
 		}
+			rounds++;
+	}
 			// after for loop, minIndex should be the index of the smallest non-zero color
 		//	intLastEatIndex = minIndex;
 			// eat one of this min color
@@ -77,15 +86,15 @@ class EatStrategy{
 			while(aintInHand[intLastEatIndex] == 0) {
 				intLastEatIndex = prefs.getColorAtRank(k--);
 			}	
-			whatToEatNow[0] = intLastEatIndex;
-			whatToEatNow[1] = 1;
+			whatToEatNow[intLastEatIndex] = aintInHand[intLastEatIndex];
+			//whatToEatNow[1] = 1;
 			rounds++;
 		}
 		else {
 			// after we're finished hoarding just eat all of one color together
-			for (int j = 0; j < aintInHand.length; j++) {
-				if (aintInHand[j] != 0)
-					min = j;
+			for (int l = 0; l < aintInHand.length; l++) {
+				if (aintInHand[l] != 0)
+					min = l;
 			}
 			intLastEatIndex = min;
 			whatToEatNow[intLastEatIndex] =  aintInHand[intLastEatIndex];
