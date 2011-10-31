@@ -28,22 +28,25 @@ public class G4FatKid extends Player {
 
 	// stuff for EatStrategy
 	private EatStrategy eatStrategy;
-	private String whatToEatNext;
-	// private SortedMap<Integer, Double> preferredColors;
 	int turn = 0;
 
 	
 	@Override
 	public void eat(int[] aintTempEat) {
 		
-		whatToEatNext = eatStrategy.eatNow(tasteArray, skittleBalanceArray);
-		String[] whichSkittle = whatToEatNext.split(" ");
-		int skittleColor = Integer.parseInt(whichSkittle[0]);
-		int numSkittles = Integer.parseInt(whichSkittle[1]);
-		aintTempEat[skittleColor] = numSkittles;
-		skittleBalanceArray[skittleColor] -= numSkittles;
-		lastEatIndex = skittleColor;
-		lastEatNum = numSkittles;
+		int[] whatToEat;
+		whatToEat = eatStrategy.eatNow();
+		
+		for (int i = 0; i < numberOfColors; i++) {
+			if (0 != whatToEat[i]) {
+				lastEatIndex = i;
+				lastEatNum = whatToEat[i];
+				break;
+			}
+		}
+
+		aintTempEat[lastEatIndex] = lastEatNum;
+		skittleBalanceArray[lastEatIndex] -= lastEatNum;
 		turn++;
 	}
 
