@@ -15,7 +15,7 @@ public class G4FatKid extends Player {
 	private int lastEatNum;
 
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = true;
+	boolean verbose = false;
 
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -34,11 +34,23 @@ public class G4FatKid extends Player {
 	@Override
 	public void eat(int[] aintTempEat) {
 		
+<<<<<<< HEAD
 		whatToEatNext = new int[aintTempEat.length];
 		whatToEatNext = eatStrategy.eatNow();
 		for(int i=0;i<whatToEatNext.length;i++){
 			aintTempEat[i] = whatToEatNext[i];
 			skittleBalanceArray[i] -= whatToEatNext[i];
+=======
+		int[] whatToEat;
+		whatToEat = eatStrategy.eatNow(skittleBalanceArray);
+		
+		for (int i = 0; i < numberOfColors; i++) {
+			if (0 != whatToEat[i]) {
+				lastEatIndex = i;
+				lastEatNum = whatToEat[i];
+				break;
+			}
+>>>>>>> Updates to EatStrategy and PreferredColors
 		}
 	}
 
@@ -207,7 +219,7 @@ public class G4FatKid extends Player {
 		tasteArray = new double[numberOfColors];
 
 		for (int intColorIndex = 0; intColorIndex < numberOfColors; intColorIndex++) {
-			tasteArray[intColorIndex] = -2;
+			tasteArray[intColorIndex] = -2.0;
 		}
 
 		if (verbose) {

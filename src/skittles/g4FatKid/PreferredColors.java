@@ -10,6 +10,7 @@ public class PreferredColors {
 
 	public PreferredColors(int numColors) {
 		ranks = new int[numColors];
+		tasteArray = new double[numColors];
 		this.numColors = numColors;
 		for (int i = 0; i < numColors; i++) {
 			ranks[i] = -1;
@@ -27,18 +28,24 @@ public class PreferredColors {
 	}
 
 	public void updateTastes(double[] adblTastes) {
-		for (int j = 0; j < numColors; j++)
+		for (int j = 0; j < numColors; j++) {
 			this.tasteArray[j] = adblTastes[j];
+		}
 	}
 
-	public double returnTastes(int index) {
-		double taste = this.tasteArray[index];
-		return taste;
+	/*
+	 * returns the taste of a specified color
+	 * returns -2 if color taste is unknown
+	 */
+	public double returnTaste(int index) {
+		return this.tasteArray[index];
 	}
 
 	public void rerank(double[] adblTastes) {
 
-		this.tasteArray = adblTastes;
+		for (int i = 0; i < numColors; i++) {
+			this.tasteArray[i] = adblTastes[i];
+		}
 		boolean[] ranked = new boolean[numColors];
 		for (int i = 0; i < numColors; i++) {
 			ranked[i] = false;
