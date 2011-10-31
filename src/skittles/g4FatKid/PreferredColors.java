@@ -16,7 +16,15 @@ public class PreferredColors {
 		}
 	}
 	
+	public void updateTastes(double[] adblTastes){
+		for(int j=0;j<numColors;j++)
+			this.adblTastes[j] = adblTastes[j];
+	}
 	
+	public double returnTastes(int index){
+		double taste = this.adblTastes[index];
+		return taste;
+	}
 	public void rerank(double[] adblTastes) {
 		
 		this.adblTastes = adblTastes;

@@ -21,7 +21,7 @@
 		<InHand>random</InHand>
 	</Player>
 	<Player>
-		<Class>skittles.g4FatKid.G4FatKid</Class>
+		<Class>skittles.g4FatKid.g4FatKid</Class>
 		<Happiness>random,5</Happiness>
 		<InHand>random</InHand></Player>
 </GameConfig>

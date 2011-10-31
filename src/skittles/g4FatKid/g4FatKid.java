@@ -5,7 +5,7 @@ import java.lang.Math;
 
 import skittles.sim.*;
 
-public class G4FatKid extends Player{ 
+public class g4FatKid extends Player{ 
 	private int[] aintInHand;
 	private int intColorNum;
 	double dblHappiness;
@@ -113,7 +113,7 @@ public class G4FatKid extends Player{
 			// update ranks in adblTastRanks (takes n^2 time)
 			prefs.rerank(adblTastes);
 			es.updatePrefs(prefs);
-			prefs.updateTaste(adblTastes);
+			prefs.updateTastes(adblTastes);
 		}
 		else
 		{

@@ -18,6 +18,10 @@ class EatStrategy{
 	private int likeMostInitCount = 0;
 	SortedMap<Integer, Double> whatILikeMostScore;
 	PreferredColors prefs;
+	List<Integer> ateAlready;
+	int i=1;
+	int initSkittleNum = 0;
+	int skittleNum = 0;
 	
 	public EatStrategy(int[] aintInHand, int intColorNum, PreferredColors prefs) {	
 		this.aintInHand = aintInHand;
@@ -27,7 +31,10 @@ class EatStrategy{
 		approxDist = 1/aintInHand.length;
 		likeMostInitCount = aintInHand[0];
 		this.prefs = prefs;
-		
+		ateAlready = new ArrayList<Integer>();
+		for(int j=0;j<aintInHand.length;j++)
+			initSkittleNum += aintInHand[j];
+		skittleNum = initSkittleNum;
 	}
 
 	public void updatePrefs(PreferredColors prefs){
@@ -36,38 +43,33 @@ class EatStrategy{
 	
 	public String eatNow(){
 		String whatToEatNow = "";
-		int i = 1;
 		int max = 0;
-		//this.intLastEatIndex = intLastEatIndex;
-		/*
-		if(intLastEatIndex == 0)
-			for(int j=0;j<aintInHand.length;j++){
-				if(aintInHand[j] > max)
-					max = j;
-				whatToEatNow = (max)+" "+1+"";
-				intLastEatIndex = max;
-			}
-		if (intLastEatIndex+1 < aintInHand.length){
-			whatToEatNow = (intLastEatIndex+1) + " " + 1 + "";
-			intLastEatIndex += 1;
-		}
-		*/
-		List<Integer> ateAlready = new ArrayList<Integer>();
 		int j;
+		
 		if(i != aintInHand.length){
 			for(j=0;j<aintInHand.length;j++)
 				if(aintInHand[j]>max && !ateAlready.contains(j)){
 					max = j;
-					ateAlready.add(j);
+					ateAlready.add(max);
 				}
-			intLastEatIndex = j;
-			whatToEatNow = j+" "+1;
+			intLastEatIndex = max;
+			whatToEatNow = intLastEatIndex+" "+1;
 			i++;
+			skittleNum--;
+		}
+		else if(!(skittleNum == initSkittleNum)){
+			intLastEatIndex = prefs.getMedian();
+			while(prefs.returnTastes(intLastEatIndex) < 0)
+				intLastEatIndex = prefs.getMedian()+1;
+			whatToEatNow = intLastEatIndex+" "+1;
+			skittleNum--;
 		}
 		else{
-			intLastEatIndex = prefs.getLowestRankedColor();
-			if(prefs.)
-			whatToEatNow = intLastEatIndex+" "+1;
+			for(j=0;j<aintInHand.length;j++)
+				if(aintInHand[j] !=0){
+					intLastEatIndex = j;
+				}
+			whatToEatNow = intLastEatIndex+" "+(aintInHand[intLastEatIndex]);
 		}
 		
 		return whatToEatNow;
