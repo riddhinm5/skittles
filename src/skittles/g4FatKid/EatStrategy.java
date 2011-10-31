@@ -1,11 +1,13 @@
 package skittles.g4FatKid;
 
+import java.util.ArrayList;
+
 class EatStrategy{
 	
 	private int[] aintInHand;
 	private int intColorNum;
 	private int intLastEatIndex;
-	
+	ArrayList<Integer> colorTasted;
 	int rounds = 0;
 
 	PreferredColors prefs;
@@ -43,7 +45,7 @@ class EatStrategy{
 		}
 		int[] whatToEatNow = new int[intColorNum];
 		int min = Integer.MAX_VALUE;
-		int minIndex = -1;
+		//int minIndex = -1;
 
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
@@ -51,30 +53,29 @@ class EatStrategy{
 			// find color with smallest amount from the colors we still don't know
 			for (int j = 0; j < aintInHand.length; j++) {
 				// only if taste of color j is unknown
-				if (prefs.returnTaste(j) == -2.0) {
-					if (aintInHand[j] < min && aintInHand[j] > 0) {
-						min = aintInHand[j];
-						minIndex = j;
-					}
-				}
+				if(!colorTasted.contains(j)){
+					intLastEatIndex = j;
+					whatToEatNow[intLastEatIndex] = 1;
+					colorTasted.add(j);
+					break;
+				}	
 			}
-			// after for loop, minIndex should be the index of the smallest non-zero color
-			intLastEatIndex = minIndex;
-			// eat one of this min color
-			whatToEatNow[intLastEatIndex] = 1;
-			skittleNum--;
+		rounds++;
 		}
-		
+			// after for loop, minIndex should be the index of the smallest non-zero color
+		//	intLastEatIndex = minIndex;
+			// eat one of this min color
+		//	whatToEatNow[intLastEatIndex] = 1;
+			//skittleNum--;
 		// else, all preferences are known, and we can move to phase 2: eat the lower colors one by one
 		// this phase goes until only one color is left
 		// TODO change to a better criteria for ending phase 2
 		
 		else if (rounds <= 2*initSkittleNum) {
+			int k = aintInHand.length-2;
 			intLastEatIndex = prefs.getLowestRankedColor();
 			while(aintInHand[intLastEatIndex] == 0) {
-				intLastEatIndex += 1;
-				if(intLastEatIndex == aintInHand.length-1)
-					intLastEatIndex = 0;
+				intLastEatIndex = prefs.getColorAtRank(k--);
 			}	
 			whatToEatNow[0] = intLastEatIndex;
 			whatToEatNow[1] = 1;
@@ -83,15 +84,19 @@ class EatStrategy{
 		else {
 			// after we're finished hoarding just eat all of one color together
 			for (int j = 0; j < aintInHand.length; j++) {
-				if (aintInHand[j] < min)
-					if (aintInHand[j] != 0)
-						min = j;
+				if (aintInHand[j] != 0)
+					min = j;
 			}
 			intLastEatIndex = min;
-			whatToEatNow[0] = intLastEatIndex;
-			whatToEatNow[1] = aintInHand[intLastEatIndex];
+			whatToEatNow[intLastEatIndex] =  aintInHand[intLastEatIndex];
 			rounds++;
 		}
 		return whatToEatNow;
 	}
 }
+
+/*if (prefs.returnTaste(j) == -2.0) {
+if (aintInHand[j] < min && aintInHand[j] > 0) {
+	min = aintInHand[j];
+	minIndex = j;
+}*/
