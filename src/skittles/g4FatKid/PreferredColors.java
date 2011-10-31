@@ -14,6 +14,7 @@ public class PreferredColors {
 		this.numColors = numColors;
 		for (int i = 0; i < numColors; i++) {
 			ranks[i] = -1;
+			tasteArray[i] = -2.0;
 		}
 	}
 	
@@ -43,9 +44,7 @@ public class PreferredColors {
 
 	public void rerank(double[] adblTastes) {
 
-		for (int i = 0; i < numColors; i++) {
-			this.tasteArray[i] = adblTastes[i];
-		}
+		updateTastes(adblTastes);
 		boolean[] ranked = new boolean[numColors];
 		for (int i = 0; i < numColors; i++) {
 			ranked[i] = false;
@@ -78,12 +77,16 @@ public class PreferredColors {
 		return ranks[0];
 	}
 
+	/*
+	 * returns the color with the lowest rank
+	 * if all colors are unknown, returns -1
+	 */
 	public int getLowestRankedColor() {
-		int i = 0;
-		while (ranks[i] != -1) {
-			i++;
+		if (ranks[0] == -1) return -1;
+		for (int i = 1; i < numColors; i++) {
+			if (ranks[i] == -1) return i - 1;
 		}
-		return ranks[i - 1];
+		return ranks[numColors-1];
 	}
 
 	public int getColorAtRank(int rank) {
@@ -95,17 +98,29 @@ public class PreferredColors {
 	}
 
 	public void printRanks() {
-		System.out.println("Personal preferences for each color (descending order):");
+		System.out.println("Personal preferences for each color (0th rank is best):");
 		for (int i = 0; i < numColors; i++) {
-			System.out.print("Color " + ranks[i] + ", happiness value = ");
+			System.out.print("Rank " + i + ": Color ");
 			if (ranks[i] == -1)
 				System.out.println("unknown");
 			else
-				System.out.println(tasteArray[ranks[i]]);
+				System.out.println(ranks[i]);
 		}
 		System.out.println();
 	}
-
+	
+	public void printTastes() {
+		System.out.println("Taste values for each color:");
+		for (int i = 0; i < numColors; i++) {
+			System.out.print("Color " + i + " happiness value = ");
+			if (tasteArray[i] == -2.0)
+				System.out.println("unknown");
+			else
+				System.out.println(tasteArray[i]);
+		}
+		System.out.println();
+	}
+	
 	/*
 	 * goodOffer evaluates offers Returns true if offer is "good," false
 	 * otherwise

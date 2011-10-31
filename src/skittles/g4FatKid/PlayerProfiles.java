@@ -26,13 +26,11 @@ public class PlayerProfiles {
 	 * returns the total volume for the specified color
 	 */
 	public int getColorTotal(int color) {
-
 		int sum = 0;
 		for (int j = 0; j < numPlayers; j++) {
 			if (netTrades[j][color] > 0)
 				sum += netTrades[j][color];
 		}
-
 		return sum;
 	}
 
@@ -46,4 +44,5 @@ public class PlayerProfiles {
 			System.out.println();
 		}
 	}
+	
 }

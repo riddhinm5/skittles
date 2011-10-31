@@ -15,7 +15,7 @@ public class G4FatKid extends Player {
 	private int lastEatNum;
 
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = false;
+	boolean verbose = true;
 
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -34,13 +34,6 @@ public class G4FatKid extends Player {
 	@Override
 	public void eat(int[] aintTempEat) {
 		
-<<<<<<< HEAD
-		whatToEatNext = new int[aintTempEat.length];
-		whatToEatNext = eatStrategy.eatNow();
-		for(int i=0;i<whatToEatNext.length;i++){
-			aintTempEat[i] = whatToEatNext[i];
-			skittleBalanceArray[i] -= whatToEatNext[i];
-=======
 		int[] whatToEat;
 		whatToEat = eatStrategy.eatNow(skittleBalanceArray);
 		
@@ -50,8 +43,11 @@ public class G4FatKid extends Player {
 				lastEatNum = whatToEat[i];
 				break;
 			}
->>>>>>> Updates to EatStrategy and PreferredColors
 		}
+
+		aintTempEat[lastEatIndex] = lastEatNum;
+		skittleBalanceArray[lastEatIndex] -= lastEatNum;
+		turn++;
 	}
 
 	@Override
@@ -122,6 +118,8 @@ public class G4FatKid extends Player {
 		if (verbose) {
 			// print the rankings of the colors
 			preferredColors.printRanks();
+			// print the tastes of each color
+			preferredColors.printTastes();
 			// print the median happiness color
 			System.out.println("Median color is " + preferredColors.getMedian());
 		}
