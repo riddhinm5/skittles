@@ -40,7 +40,7 @@ class EatStrategy{
 		int min = 100;
 
 		//Rounds to taste each of the skittles to check if we like them
-		if (i != aintInHand.length){
+		if (i <= aintInHand.length){
 			for (j = 0; j < aintInHand.length; j++) {
 				if (aintInHand[j] > max && !ateAlready.contains(j)) {
 					if (aintInHand[j] != 0) {
