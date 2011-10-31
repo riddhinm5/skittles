@@ -34,14 +34,19 @@ class EatStrategy{
 	}
 
 	public int[] eatNow() {
-		int[] whatToEatNow = new int[2];
+		int[] whatToEatNow = new int[intColorNum];
 		int max = 0;
-		int j;
 		int min = 100;
 
+<<<<<<< HEAD
 		//Rounds to taste each of the skittles to check if we like them
 		if (i <= aintInHand.length){
 			for (j = 0; j < aintInHand.length; j++) {
+=======
+		// Rounds to taste each of the skittles to check if we like them
+		if (i != aintInHand.length) {
+			for (int j = 0; j < aintInHand.length; j++) {
+>>>>>>> Beginning to rewrite EatStrategy
 				if (aintInHand[j] > max && !ateAlready.contains(j)) {
 					if (aintInHand[j] != 0) {
 						max = j;
@@ -69,7 +74,7 @@ class EatStrategy{
 		}
 		else {
 			// after we're finished hoarding just eat all of one color together
-			for (j = 0; j < aintInHand.length; j++) {
+			for (int j = 0; j < aintInHand.length; j++) {
 				if (aintInHand[j] < min)
 					if (aintInHand[j] != 0)
 						min = j;
