@@ -78,8 +78,7 @@ public class PreferredColors {
 	}
 
 	public void printRanks() {
-		System.out
-				.println("Personal preferences for each color (descending order):");
+		System.out.println("Personal preferences for each color (descending order):");
 		for (int i = 0; i < numColors; i++) {
 			System.out.print("Color " + ranks[i] + ", happiness value = ");
 			if (ranks[i] == -1)
