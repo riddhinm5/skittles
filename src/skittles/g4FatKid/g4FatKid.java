@@ -113,7 +113,10 @@ public class g4FatKid extends Player{
 			// update ranks in adblTastRanks (takes n^2 time)
 			prefs.rerank(adblTastes);
 			es.updatePrefs(prefs);
+<<<<<<< HEAD
 			prefs.updateTastes(adblTastes);
+=======
+>>>>>>> 72ad54e7331f2bbb8c6176053cd106b3c5ae726a
 		}
 		else
 		{
@@ -220,7 +223,6 @@ public class g4FatKid extends Player{
 		// create PreferredColors object
 		prefs = new PreferredColors(intColorNum);
 		es = new EatStrategy(aintInHand,intColorNum,prefs);	
-		System.out.println("FatKid starts");
 		
 		// create EatStrategy object
 		//es = new EatStrategy(aintInHand, intColorNum, preferredColors);
