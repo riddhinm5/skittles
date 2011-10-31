@@ -2,9 +2,11 @@ package skittles.g4FatKid;
 
 public class PreferredColors {
 
-	// ranks[0] = the highest ranked color, abdlTasteRank[1] is second, etc.
+	// ranks[0] = the highest ranked color, ranks[1] is second, etc.
 	private int[] ranks;
 	private int numColors;
+	private int median;
+	private double[] adblTastes;
 	
 	public PreferredColors(int numColors) {
 		ranks = new int[numColors];
@@ -17,13 +19,14 @@ public class PreferredColors {
 	
 	public void rerank(double[] adblTastes) {
 		
+		this.adblTastes = adblTastes;
 		boolean[] ranked = new boolean[numColors];
 		for (int i = 0; i < numColors; i++) {
 			ranked[i] = false;
 		}
 		
 		for (int rank = 0; rank < numColors; rank++) {
-			int indexOfBest = 0;
+			int indexOfBest = -1;
 			double best = 0;
 			for (int i = 0; i < numColors; i++) {
 				if (adblTastes[i] > best && ranked[i] != true) {
@@ -32,8 +35,14 @@ public class PreferredColors {
 				}
 			}
 			ranks[rank] = indexOfBest;
-			ranked[indexOfBest] = true;
+			if (indexOfBest != -1) ranked[indexOfBest] = true;
 		}
+		
+		int medRank = numColors/2;  // medRank is the middle rank
+		while (medRank < 0 && adblTastes[ranks[medRank]] < 0.0) {
+			medRank--;
+		}
+		this.median = medRank;  // median is the median value, or the smallest non-zero number if median is negative
 		
 	}
 	
@@ -53,12 +62,33 @@ public class PreferredColors {
 		return ranks[rank];
 	}
 	
+	public int getMedian() {
+		return median;
+	}
+	
 	public void printRanks() {
 		System.out.println("Personal preferences for each color (descending order):");
 		for (int i = 0; i < numColors; i++) {
-			System.out.print(ranks[i] + " ");
+			System.out.print("Color " + ranks[i] + ", happiness value = ");
+			if (ranks[i] == -1) System.out.println("unknown");
+			else System.out.println(adblTastes[ranks[i]]);
 		}
 		System.out.println();
+	}
+	
+	/*
+	 * goodOffer evaluates offers
+	 * Returns true if offer is "good," false otherwise
+	 */
+	public boolean goodOffer(int[] skittlesToLose, int[] skittlesToGain) {
+		
+		// basic good offer algorithm
+		// takes offers that satisfy "nothing gained worst than median, nothing lost better than median"
+		for (int i = 0; i < numColors; i++) {
+			if (skittlesToLose[i] != 0 && i <= median) return false;
+			if (skittlesToGain[i] != 0 && i > median) return false;
+		}
+		return true;
 	}
 	
 }

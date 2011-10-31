@@ -34,11 +34,12 @@ class EatStrategy{
 		this.prefs = prefs;
 	}
 	
-	public String eatNow(int intLastEatIndex){
+	public String eatNow(){
 		String whatToEatNow = "";
 		int i = 1;
 		int max = 0;
-		this.intLastEatIndex = intLastEatIndex;
+		//this.intLastEatIndex = intLastEatIndex;
+		/*
 		if(intLastEatIndex == 0)
 			for(int j=0;j<aintInHand.length;j++){
 				if(aintInHand[j] > max)
@@ -50,14 +51,25 @@ class EatStrategy{
 			whatToEatNow = (intLastEatIndex+1) + " " + 1 + "";
 			intLastEatIndex += 1;
 		}
-		else if(aintInHand[Integer.parseInt((whatILikeMostScore.get(whatILikeMostScore.firstKey())+""))] == 2/3*(Double.parseDouble(likeMostInitCount+"")))
-			if(whatILikeMostScore.get(whatILikeMostScore.size()/2-1) > 0)
-				whatToEatNow = whatILikeMostScore.get(whatILikeMostScore.size()/2-1)+" "+1+"";
-			else{
-				while(!(whatILikeMostScore.get((whatILikeMostScore.size()/2-1)+i) > 0))
-					i++;
-			}
-		whatToEatNow = whatILikeMostScore.get((whatILikeMostScore.size()/2-1)+i)+" "+1+"";
+		*/
+		List<Integer> ateAlready = new ArrayList<Integer>();
+		int j;
+		if(i != aintInHand.length){
+			for(j=0;j<aintInHand.length;j++)
+				if(aintInHand[j]>max && !ateAlready.contains(j)){
+					max = j;
+					ateAlready.add(j);
+				}
+			intLastEatIndex = j;
+			whatToEatNow = j+" "+1;
+			i++;
+		}
+		else{
+			intLastEatIndex = prefs.getLowestRankedColor();
+			if(prefs.)
+			whatToEatNow = intLastEatIndex+" "+1;
+		}
+		
 		return whatToEatNow;
 	}
 }
