@@ -367,6 +367,7 @@ public class Game
 				}
 				else
 				{
+					System.out.println(" inside offer picker");
 					offPicked.setOfferLive( false );
 					int intPickedByIndex = intPlayerIndex;
 					int intOfferedByIndex = offPicked.getOfferedByIndex();
