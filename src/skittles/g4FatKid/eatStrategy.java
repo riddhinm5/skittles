@@ -57,16 +57,10 @@ class EatStrategy{
 			i++;
 			skittleNum--;
 		}
-<<<<<<< HEAD
 		else if(!(skittleNum == initSkittleNum)){
 			intLastEatIndex = prefs.getMedian();
 			while(prefs.returnTastes(intLastEatIndex) < 0)
 				intLastEatIndex = prefs.getMedian()+1;
-=======
-		else{
-			intLastEatIndex = prefs.getLowestRankedColor();
-			//if(prefs.)
->>>>>>> 72ad54e7331f2bbb8c6176053cd106b3c5ae726a
 			whatToEatNow = intLastEatIndex+" "+1;
 			skittleNum--;
 		}
