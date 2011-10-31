@@ -15,6 +15,16 @@ public class PreferredColors {
 			ranks[i] = -1;
 		}
 	}
+	
+	/*
+	 * returns true if all preferences are known, false otherwise
+	 */
+	public boolean allPreferencesKnown() {
+		for (int i = 0; i < numColors; i++) {
+			if (ranks[i] == -1) return false;
+		}
+		return true;
+	}
 
 	public void updateTastes(double[] adblTastes) {
 		for (int j = 0; j < numColors; j++)
