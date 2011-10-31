@@ -219,7 +219,6 @@ public class G4FatKid extends Player{
 		// create PreferredColors object
 		prefs = new PreferredColors(intColorNum);
 		es = new EatStrategy(aintInHand,intColorNum,prefs);	
-		System.out.println("FatKid starts");
 		
 		// create EatStrategy object
 		//es = new EatStrategy(aintInHand, intColorNum, preferredColors);
