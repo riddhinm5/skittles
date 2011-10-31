@@ -1,14 +1,11 @@
 package skittles.g4FatKid;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.*;
 import java.lang.Math;
 
 import skittles.sim.*;
 
-public class G4FatKid extends Player{
-
+public class G4FatKid extends Player{ 
 	private int[] aintInHand;
 	private int intColorNum;
 	double dblHappiness;
@@ -18,7 +15,7 @@ public class G4FatKid extends Player{
 	private double[] adblTastes;
 	private int intLastEatIndex;
 	private int intLastEatNum;
-	eatStrategy es;
+	
 	// set verbose to false to suppress output of debug statements
 	boolean verbose = true;
 	
@@ -34,11 +31,10 @@ public class G4FatKid extends Player{
 	// stuff for EatStrategy
 	private EatStrategy es;
 	private String whatToEatNext;
-	private SortedMap<Integer, Double> preferredColors;
+	//private SortedMap<Integer, Double> preferredColors;
 	int turn = 0;
 	
-	@Override
-	public void eat( int[] aintTempEat )
+	/*public void eat( int[] aintTempEat )
 	{
 		int intMaxColorIndex = -1;
 		int intMaxColorNum = 0;
@@ -54,14 +50,11 @@ public class G4FatKid extends Player{
 		aintInHand[ intMaxColorIndex ] = 0;
 		intLastEatIndex = intMaxColorIndex;
 		intLastEatNum = intMaxColorNum;
-	}
-	/*
+	}*/
+	@Override
 	public void eat(int[] aintTempEat) {
 		
-		if (turn == 0)
-			whatToEatNext = es.eatNow(0);
-		else
-			whatToEatNext = es.eatNow(intLastEatIndex);
+		whatToEatNext = es.eatNow();
 		String[] whichSkittle = whatToEatNext.split(" ");
 		int skittleColor = Integer.parseInt(whichSkittle[0]);
 		int numSkittles = Integer.parseInt(whichSkittle[1]);
@@ -70,7 +63,7 @@ public class G4FatKid extends Player{
 		intLastEatIndex = skittleColor;
 		intLastEatNum = numSkittles;
 		turn++;
-	}*/
+	}
 
 	@Override
 	public void offer(Offer offTemp) {
@@ -119,6 +112,8 @@ public class G4FatKid extends Player{
 			adblTastes[ intLastEatIndex ] = dblHappinessPerCandy;
 			// update ranks in adblTastRanks (takes n^2 time)
 			prefs.rerank(adblTastes);
+			es.updatePrefs(prefs);
+			prefs.updateTaste(adblTastes);
 		}
 		else
 		{
@@ -208,14 +203,14 @@ public class G4FatKid extends Player{
 		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ ) {
 			adblTastes[ intColorIndex ] = -1;
 		}
-		es = new eatStrategy(aintInHand,intColorNum,whatILikeMostScore);	
-		System.out.println("FatKid starts");
 		
 		// create PreferredColors object
 		prefs = new PreferredColors(intColorNum);
+		es = new EatStrategy(aintInHand,intColorNum,prefs);	
+		System.out.println("FatKid starts");
 		
 		// create EatStrategy object
-		es = new EatStrategy(aintInHand, intColorNum, preferredColors);
+		//es = new EatStrategy(aintInHand, intColorNum, preferredColors);
 		
 		// create PlayerProfile object; hard-coding 5 for number of Players
 		// will change this to number of players when we find out how to get this value from the
@@ -224,8 +219,7 @@ public class G4FatKid extends Player{
 		
 		// create Market object
 		market = new Market(intColorNum);
-		
->>>>>>> bcc24950fc6dedf0c2feef621cb2fbdb239a9ca4
+
 	}
 
 	@Override

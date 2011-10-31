@@ -9,11 +9,11 @@ public class PreferredColors {
 	public PreferredColors(int numColors) {
 		ranks = new int[numColors];
 		this.numColors = numColors;
-		
 		for (int i = 0; i < numColors; i++) {
 			ranks[i] = -1;
 		}
 	}
+	
 	
 	public void rerank(double[] adblTastes) {
 		

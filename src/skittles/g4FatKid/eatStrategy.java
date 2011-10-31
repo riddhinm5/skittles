@@ -16,15 +16,22 @@ class EatStrategy{
 	private int intLastEatNum;
 	//private List<Integer> whatILikeMost = new ArrayList<Integer>();
 	private int likeMostInitCount = 0;
-	private SortedMap<Integer, Double> whatILikeMostScore;
+	SortedMap<Integer, Double> whatILikeMostScore;
+	PreferredColors prefs;
 	
-	public EatStrategy(int[] aintInHand, int intColorNum, SortedMap<Integer, Double> whatILikeMostScore) {	
+	public EatStrategy(int[] aintInHand, int intColorNum, PreferredColors prefs) {	
 		this.aintInHand = aintInHand;
 		this.intColorNum = intColorNum;
-		this.whatILikeMostScore = whatILikeMostScore;
-		//this.intLastEatIndex = intLastEatIndex;
+		//this.whatILikeMostScore = whatILikeMostScore;
+		intLastEatIndex = 0;
 		approxDist = 1/aintInHand.length;
 		likeMostInitCount = aintInHand[0];
+		this.prefs = prefs;
+		
+	}
+
+	public void updatePrefs(PreferredColors prefs){
+		this.prefs = prefs;
 	}
 	
 	public String eatNow(int intLastEatIndex){
@@ -43,7 +50,7 @@ class EatStrategy{
 			whatToEatNow = (intLastEatIndex+1) + " " + 1 + "";
 			intLastEatIndex += 1;
 		}
-		else if(aintInHand[Integer.parseInt(whatILikeMostScore.get(1)+"")] == 2/3*(Double.parseDouble(likeMostInitCount+"")))
+		else if(aintInHand[Integer.parseInt((whatILikeMostScore.get(whatILikeMostScore.firstKey())+""))] == 2/3*(Double.parseDouble(likeMostInitCount+"")))
 			if(whatILikeMostScore.get(whatILikeMostScore.size()/2-1) > 0)
 				whatToEatNow = whatILikeMostScore.get(whatILikeMostScore.size()/2-1)+" "+1+"";
 			else{
