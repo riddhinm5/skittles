@@ -44,9 +44,8 @@ public class G4FatKid extends Player {
 				lastEatNum = aintTempEat[i]; 
 			}
 		}
-
 		//aintTempEat[lastEatIndex] = lastEatNum;
-		//skittleBalanceArray[lastEatIndex] -= lastEatNum;
+		skittleBalanceArray[lastEatIndex] -= lastEatNum;
 		//turn++;
 	}
 
