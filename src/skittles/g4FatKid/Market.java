@@ -5,21 +5,22 @@ public class Market {
 	// volumeArray[x] = total volume of trades in color x
 	private int[] volumeArray;
 	private int numColors;
-	
-	// rankingArray[0] = color with highest volume, array[1] = color with second highest volume, etc
+
+	// rankingArray[0] = color with highest volume, array[1] = color with second
+	// highest volume, etc
 	private int[] rankingArray;
-	
+
 	public Market(int numColors) {
 		volumeArray = new int[numColors];
 		rankingArray = new int[numColors];
 		this.numColors = numColors;
 	}
-	
+
 	public void updateTrades(PlayerProfiles opponentProfiles) {
 		for (int color = 0; color < numColors; color++) {
 			volumeArray[color] = opponentProfiles.getColorTotal(color);
 		}
-		
+
 		// also update rankingArray
 		boolean[] ranked = new boolean[numColors];
 		for (int i = 0; i < numColors; i++) {
@@ -39,13 +40,14 @@ public class Market {
 		}
 
 	}
+
 	/*
 	 * takes rank as input, returns the color with that rank
 	 */
 	public int getColorAtRank(int rank) {
 		return rankingArray[rank];
 	}
-	
+
 	public void printVolumeTable() {
 		System.out.println("Volume totals:");
 		for (int i = 0; i < numColors; i++) {
@@ -53,7 +55,7 @@ public class Market {
 		}
 		System.out.println();
 	}
-	
+
 	public void printRankings() {
 		System.out.println("Color rankings:");
 		for (int i = 0; i < numColors; i++) {
@@ -61,5 +63,5 @@ public class Market {
 		}
 		System.out.println();
 	}
-	
+
 }
