@@ -38,16 +38,16 @@ public class G4FatKid extends Player {
 		whatToEat = eatStrategy.eatNow(skittleBalanceArray);
 		
 		for (int i = 0; i < numberOfColors; i++) {
-			if (0 != whatToEat[i]) {
+			aintTempEat[i] = whatToEat[i];
+			if(aintTempEat[i] !=0){
 				lastEatIndex = i;
-				lastEatNum = whatToEat[i];
-				break;
+				lastEatNum = aintTempEat[i]; 
 			}
 		}
 
-		aintTempEat[lastEatIndex] = lastEatNum;
-		skittleBalanceArray[lastEatIndex] -= lastEatNum;
-		turn++;
+		//aintTempEat[lastEatIndex] = lastEatNum;
+		//skittleBalanceArray[lastEatIndex] -= lastEatNum;
+		//turn++;
 	}
 
 	@Override
