@@ -113,7 +113,6 @@ public class G4FatKid extends Player{
 			// update ranks in adblTastRanks (takes n^2 time)
 			prefs.rerank(adblTastes);
 			es.updatePrefs(prefs);
-			prefs.updateTaste(adblTastes);
 		}
 		else
 		{

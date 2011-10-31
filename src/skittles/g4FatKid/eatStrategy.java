@@ -66,7 +66,7 @@ class EatStrategy{
 		}
 		else{
 			intLastEatIndex = prefs.getLowestRankedColor();
-			if(prefs.)
+			//if(prefs.)
 			whatToEatNow = intLastEatIndex+" "+1;
 		}
 		
