@@ -81,12 +81,15 @@ class EatStrategy{
 		// TODO change to a better criteria for ending phase 2
 		
 		else if (rounds <= 2*initSkittleNum) {
-			int k = aintInHand.length-2;
+			int k = aintInHand.length-1;
 			intLastEatIndex = prefs.getLowestRankedColor();
 			while(aintInHand[intLastEatIndex] == 0) {
-				intLastEatIndex = prefs.getColorAtRank(k--);
+				intLastEatIndex = prefs.getColorAtRank(k);
+				if(intLastEatIndex == -1)
+					intLastEatIndex = 0;
+				k--;
 			}	
-			whatToEatNow[intLastEatIndex] = aintInHand[intLastEatIndex];
+			whatToEatNow[intLastEatIndex] = 1;
 			//whatToEatNow[1] = 1;
 			rounds++;
 		}
