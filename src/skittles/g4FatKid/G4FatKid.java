@@ -17,9 +17,10 @@ public class G4FatKid extends Player {
 	
 	private boolean endOfGame;
 	private int maxNullOfferRounds;
+	private int streakOfNullOffers;
 
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = true;
+	boolean verbose = false;
 
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -39,7 +40,7 @@ public class G4FatKid extends Player {
 	public void eat(int[] aintTempEat) {
 		
 		int[] whatToEat;
-		whatToEat = eatStrategy.eatNow(skittleBalanceArray);
+		whatToEat = eatStrategy.eatNow(skittleBalanceArray, endOfGame);
 		
 		for (int i = 0; i < numberOfColors; i++) {
 			aintTempEat[i] = whatToEat[i];
@@ -131,11 +132,15 @@ public class G4FatKid extends Player {
 	@Override
 	public Offer pickOffer(Offer[] currentOffers) {
 
+		boolean allNullOffers = true;
 		Offer offReturn = null;
 		for (Offer offTemp : currentOffers) {
 			if (offTemp.getOfferedByIndex() == playerIndex || offTemp.getOfferLive() == false)
 				continue;
 			int[] skittlesLost = offTemp.getDesire();
+			for (int i = 0; i < numberOfColors; i++) {
+				if (skittlesLost[i] != 0) allNullOffers = false;
+			}
 			// first, check if we can even fulfill the offer
 			if (checkEnoughInHand(skittlesLost)) {
 				int[] skittlesGained = offTemp.getOffer();
@@ -150,6 +155,14 @@ public class G4FatKid extends Player {
 					continue;
 			}
 		}
+		// if all the offers are null, increment the streak count
+		if (allNullOffers) streakOfNullOffers++;
+		// else, reset the count to zero
+		else streakOfNullOffers = 0;
+		
+		// check if the streak surpassed the threshold, and set endOfGame if it has
+		if (streakOfNullOffers > maxNullOfferRounds) endOfGame = true;
+		
 		if (verbose) {
 			if (offReturn != null) {
 				System.out.println("Offer taken");
@@ -240,6 +253,7 @@ public class G4FatKid extends Player {
 		
 		endOfGame = false;
 		maxNullOfferRounds = 3;
+		streakOfNullOffers = 0;
 
 	}
 

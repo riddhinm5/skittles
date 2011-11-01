@@ -29,7 +29,7 @@ public class EatStrategy {
 	 * returns an array of length numberOfColors
 	 * array[x] = number of color x to eat
 	 */
-	public int[] eatNow(int[] inHand) {
+	public int[] eatNow(int[] inHand, boolean endOfGame) {
 		
 		for (int j = 0; j < intColorNum; j++) {
 			this.aintInHand[j] = inHand[j];
@@ -40,7 +40,7 @@ public class EatStrategy {
 
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
-		if (!prefs.allPreferencesKnown(aintInHand)) {
+		if (!prefs.allPreferencesKnown(aintInHand) && !endOfGame) {
 			// find color with smallest amount from the colors we still don't know
 			for (int j = 0; j < intColorNum; j++) {
 				// only if taste of color j is unknown
@@ -66,8 +66,10 @@ public class EatStrategy {
 			for (int i = 0; i < intColorNum; i++) {
 				if (aintInHand[i] > 0) colorCount++;
 			}
-			
+
 			int colorsToHoard = 2; // this is the number of colors to hoard
+			// if it's the end of the game, then we can eat all piles as quickly as possible
+			if (endOfGame) colorsToHoard = intColorNum;
 			// if we only colors we are hoarding left in our hand, eat all of them
 			if (colorCount <= colorsToHoard ) {
 				for (int i = 0; i < intColorNum; i++) {
