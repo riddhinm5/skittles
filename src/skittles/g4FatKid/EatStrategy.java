@@ -2,17 +2,13 @@ package skittles.g4FatKid;
 
 import java.util.ArrayList;
 
-class EatStrategy{
+public class EatStrategy {
 	
 	private int[] aintInHand;
 	private int intColorNum;
 	private int intLastEatIndex;
-	ArrayList<Integer> colorTasted;
-	int rounds = 0;
 
 	PreferredColors prefs;
-	double initSkittleNum = 0;
-	double skittleNum = 0;
 
 	public EatStrategy(int[] inHand, int intColorNum, PreferredColors prefs) {	
 		
@@ -21,14 +17,8 @@ class EatStrategy{
 			this.aintInHand[j] = inHand[j];
 		}
 		this.intColorNum = intColorNum;
-		
 		intLastEatIndex = 0;
-
 		this.prefs = prefs;
-		for (int j = 0; j < aintInHand.length; j++)
-			initSkittleNum += aintInHand[j];
-		skittleNum = initSkittleNum;
-		colorTasted = new ArrayList<Integer>();
 	}
 
 	public void updatePrefs(PreferredColors prefs){
@@ -46,71 +36,59 @@ class EatStrategy{
 		}
 		int[] whatToEatNow = new int[intColorNum];
 		int min = Integer.MAX_VALUE;
-		//int minIndex = -1;
+		int minIndex = -1;
 
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
-		int j;
-		if (!prefs.allPreferencesKnown() && rounds < aintInHand.length - 1) {
+		if (!prefs.allPreferencesKnown()) {
 			// find color with smallest amount from the colors we still don't know
-			for (j = 0; j < aintInHand.length; j++) {
+			for (int j = 0; j < intColorNum; j++) {
 				// only if taste of color j is unknown
-				if(colorTasted.isEmpty() || !colorTasted.contains(j) && aintInHand[j] != 0) {
-					intLastEatIndex = j;
-					whatToEatNow[intLastEatIndex] = 1;
-					colorTasted.add(j);
-					break;
-				}
-				else if (aintInHand[j] == 0 && j == aintInHand.length-1) {
-					for (int l = 0; l < aintInHand.length; l++) {
-						if (aintInHand[l] != 0) {
-							intLastEatIndex = l;
-							whatToEatNow[l] = 1;
-							break;
-						}
+				if (prefs.getRankOfColor(j) == -1) {
+					System.out.println("here");
+					if (aintInHand[j] < min && aintInHand[j] > 0) {
+						min = aintInHand[j];
+						minIndex = j;
 					}
 				}
 			}
-			rounds++;
-		}
 			// after for loop, minIndex should be the index of the smallest non-zero color
-		//	intLastEatIndex = minIndex;
+			intLastEatIndex = minIndex;
 			// eat one of this min color
-		//	whatToEatNow[intLastEatIndex] = 1;
-			//skittleNum--;
-		// else, all preferences are known, and we can move to phase 2: eat the lower colors one by one
-		// this phase goes until only one color is left
-		// TODO change to a better criteria for ending phase 2
-		
-		else if (rounds <= 2*initSkittleNum) {
-			int k = aintInHand.length-1;
-			intLastEatIndex = prefs.getLowestRankedColor();
-			while(aintInHand[intLastEatIndex] == 0) {
-				intLastEatIndex = prefs.getColorAtRank(k);
-				if(intLastEatIndex == -1)
-					intLastEatIndex = 0;
-				k--;
-			}	
 			whatToEatNow[intLastEatIndex] = 1;
-			//whatToEatNow[1] = 1;
-			rounds++;
+			return whatToEatNow;
 		}
+		
+		// else, all preferences are known, and we can move to phase 2:
+		// this phase goes until only one color is left
 		else {
-			// after we're finished hoarding just eat all of one color together
-			for (int l = 0; l < aintInHand.length; l++) {
-				if (aintInHand[l] != 0)
-					min = l;
+			// check if only one color is remaining in our hand
+			int colorCount = 0;
+			for (int i = 0; i < intColorNum; i++) {
+				if (aintInHand[i] != 0) colorCount++;
 			}
-			intLastEatIndex = min;
-			whatToEatNow[intLastEatIndex] =  aintInHand[intLastEatIndex];
-			rounds++;
+			
+			// if we only have one color left in our hand, eat all of them
+			if (colorCount == 1 ) {
+				for (int i = 0; i < intColorNum; i++) {
+					if (aintInHand[i] != 0) {
+						whatToEatNow[i] = aintInHand[i];
+						return whatToEatNow;
+					}
+				}
+			}
+			// else, there are more than one color left in our hand, so we eat one of the colors ranked median or lower
+			else {
+				int medianRank = prefs.getMedian();
+				for (int i = medianRank; i < intColorNum; i++) {
+					if (aintInHand[i] > 0) {
+						whatToEatNow[i] = 1;
+						return whatToEatNow;
+					}
+				}
+			}
 		}
 		return whatToEatNow;
 	}
+	
 }
-
-/*if (prefs.returnTaste(j) == -2.0) {
-if (aintInHand[j] < min && aintInHand[j] > 0) {
-	min = aintInHand[j];
-	minIndex = j;
-}*/

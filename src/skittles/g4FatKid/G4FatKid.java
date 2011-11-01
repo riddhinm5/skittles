@@ -161,12 +161,12 @@ public class G4FatKid extends Player {
 
 	@Override
 	public void offerExecuted(Offer offer) {
-		if(verbose){
+		if (verbose) {
 			System.out.println("after updation");
 		}
 		int[] offerList = offer.getOffer();
 		int[] desiredList = offer.getDesire();
-		for ( int intColorIndex = 0; intColorIndex < numberOfColors; intColorIndex ++ )
+		for (int intColorIndex = 0; intColorIndex < numberOfColors; intColorIndex++)
 		{
 			skittleBalanceArray[ intColorIndex ] += desiredList[ intColorIndex ] - offerList[ intColorIndex ];
 		}
@@ -226,17 +226,12 @@ public class G4FatKid extends Player {
 
 		// create PreferredColors object
 		preferredColors = new PreferredColors(numberOfColors);
+		
+		// create EatStrategy object
 		eatStrategy = new EatStrategy(aintInHand, numberOfColors, preferredColors);
 
-		// create EatStrategy object
-		// es = new EatStrategy(aintInHand, intColorNum, preferredColors);
-
-		// create PlayerProfile object; hard-coding 5 for number of Players
-		// will change this to number of players when we find out how to get
-		// this value from the
-		// simulator. For now, this will work for any number of players less
-		// than 10
-		opponentProfiles = new PlayerProfiles(5, numberOfColors);
+		// create PlayerProfile object
+		opponentProfiles = new PlayerProfiles(playerNum, numberOfColors);
 
 		// create Market object
 		market = new Market(numberOfColors);

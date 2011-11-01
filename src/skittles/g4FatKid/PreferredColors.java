@@ -89,12 +89,23 @@ public class PreferredColors {
 		return ranks[numColors-1];
 	}
 
+	/*
+	 * takes input of rank, returns the color with this rank
+	 */
 	public int getColorAtRank(int rank) {
 		return ranks[rank];
 	}
-
-	public int getMedian() {
-		return median;
+	
+	/*
+	 * takes input of color, returns the rank of this color
+	 * if color is unknown, returns -1
+	 * if color is unranked, returns -1
+	 */
+	public int getRankOfColor(int color) {
+		for (int i = 0; i < numColors; i++) {
+			if (ranks[i] == color) return i;
+		}
+		return -1;
 	}
 
 	public void printRanks() {
@@ -158,7 +169,17 @@ public class PreferredColors {
 			return false;
 	}
 
-	public int getMedianElement(int median){
+	/*
+	 * returns the color value with median rank
+	 */
+	public int getMedianElement(){
 		return ranks[median];
+	}
+	
+	/*
+	 * returns the rank of the media 
+	 */
+	public int getMedian() {
+		return median;
 	}
 }
