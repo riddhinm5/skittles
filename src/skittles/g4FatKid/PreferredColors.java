@@ -176,7 +176,7 @@ public class PreferredColors {
 	/*
 	 * returns the color value with median rank
 	 */
-	public int getMedianElement(){
+	public int getMedianElement() {
 		return ranks[median];
 	}
 	
@@ -188,9 +188,9 @@ public class PreferredColors {
 	}
 	
 	
-	public boolean doesRankExist(int colorNumber){
-		for(int i=0; i < numColors ;i++){
-			if(ranks[i]== colorNumber)
+	public boolean doesRankExist(int colorNumber) {
+		for (int i = 0; i < numColors; i++) {
+			if (ranks[i] == colorNumber)
 				return true;
 		}
 		return false;

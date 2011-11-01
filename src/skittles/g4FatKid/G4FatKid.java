@@ -14,6 +14,9 @@ public class G4FatKid extends Player {
 	private double[] tasteArray;
 	private int lastEatIndex;
 	private int lastEatNum;
+	
+	private boolean endOfGame;
+	private int maxNullOfferRounds;
 
 	// set verbose to false to suppress output of debug statements
 	boolean verbose = true;
@@ -130,8 +133,7 @@ public class G4FatKid extends Player {
 
 		Offer offReturn = null;
 		for (Offer offTemp : currentOffers) {
-			if (offTemp.getOfferedByIndex() == playerIndex
-					|| offTemp.getOfferLive() == false)
+			if (offTemp.getOfferedByIndex() == playerIndex || offTemp.getOfferLive() == false)
 				continue;
 			int[] skittlesLost = offTemp.getDesire();
 			// first, check if we can even fulfill the offer
@@ -235,6 +237,9 @@ public class G4FatKid extends Player {
 
 		// create Market object
 		market = new Market(numberOfColors);
+		
+		endOfGame = false;
+		maxNullOfferRounds = 3;
 
 	}
 
