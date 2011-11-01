@@ -1,5 +1,7 @@
 package skittles.sim;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,16 +24,11 @@ public class Game
 	private int intPlayerNum;
 	private int intColorNum;
 	
-	private Offer[] aoffCurrentOffers;
+	private Offer[] aoffCurrentOffers = null;
+	private int[][] aintCurrentEats = null;
 	
 	public static Scanner scnInput = new Scanner( System.in );
 	
-	
-	/*
-	* Initailizes everything including total number of skittles in hand and number of colors.
-	 * imp variables: intColorNum, intTotalNum, alPlayers, alPlayerStatus
-	 * also assigns random distribution of skittles based on xml 
-	 */
 	public Game( String strXMLPath )
 	{
 		DocumentBuilderFactory dbfGameConfig = DocumentBuilderFactory.newInstance();
@@ -62,8 +59,8 @@ public class Game
 				//get the employee element
 				Element elmGame = (Element) ndlGame.item(i);
 				//retrieve player information
-				intColorNum = Integer.parseInt( getTagValue( elmGame, "ColorNum" ) ); //## total number of colors of skitltes in hand
-				intTotalNum = Integer.parseInt( getTagValue( elmGame, "SkittleNum" ) );	 //## total number of skittles in hand
+				intColorNum = Integer.parseInt( getTagValue( elmGame, "ColorNum" ) );
+				intTotalNum = Integer.parseInt( getTagValue( elmGame, "SkittleNum" ) );	
 			}
 		}
 		// initialize players
@@ -95,12 +92,12 @@ public class Game
 				{
 					double dblMean = Double.parseDouble( astrTastes[ 1 ] );
 					adblTastes = randomTastes( dblMean );
-//					System.out.println( "Random color happiness:" );
-//					for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
-//					{
-//						System.out.print( adblTastes[ intColorIndex ] );
-//					}
-//					System.out.println();
+					System.out.println( "Random color happiness:" );
+					for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+					{
+						System.out.print( adblTastes[ intColorIndex ] );
+					}
+					System.out.println();
 				}
 				String strInHand = getTagValue( elmPlayer, "InHand" );
 				int[] aintInHand = new int[ intColorNum ];
@@ -139,7 +136,7 @@ public class Game
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				plyNew.initialize( i, strPlayerClass, aintInHand.clone() );
+				plyNew.initialize( intPlayerNum, i, strPlayerClass, aintInHand.clone() );
 				alPlayers.add( plyNew );
 				PlayerStatus plsTemp = new PlayerStatus( i, strPlayerClass, aintInHand.clone(), adblTastes.clone() );
 				alPlayerStatus.add( plsTemp );
@@ -149,9 +146,186 @@ public class Game
 		aplsPlayerStatus = alPlayerStatus.toArray( new PlayerStatus[ 0 ] );	
 	}
 	
-	/*
-	* assigns random like scores imp var: adblRandomTastes
-	*/
+	public void runGame()
+	{
+		FileWriter[] afrtPortfolio = new FileWriter[ intPlayerNum ];
+		BufferedWriter[] abfwPortfolio = new BufferedWriter[ intPlayerNum ];
+		try {
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				afrtPortfolio[ intPlayerIndex ] = new FileWriter( "P" + intPlayerIndex + ".txt" );
+				abfwPortfolio[ intPlayerIndex ] = new BufferedWriter( afrtPortfolio[ intPlayerIndex ] );
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// check whether there is still at least one player has more skittles to eat
+		logGame( abfwPortfolio, "E" );
+		logGame( abfwPortfolio, "O" );
+		logGame( abfwPortfolio, "P" );
+		logGame( abfwPortfolio, "H" );
+		logGame( abfwPortfolio, "N" );
+		while ( !checkFinish() )
+		{
+			showEveryInHand();		
+			everyoneEatAndOffer();
+			logGame( abfwPortfolio, "E" );
+			int[] aintOrder = generateRandomOfferPickOrder();			// need code to log the order for repeated game
+			pickOfferInOrder( aintOrder );
+			broadcastOfferExcution();
+			logGame( abfwPortfolio, "O" );
+			logGame( abfwPortfolio, "P" );
+			logGame( abfwPortfolio, "H" );
+			logGame( abfwPortfolio, "N" );
+		}
+		double dblAver = 0;
+		for ( PlayerStatus plsTemp : aplsPlayerStatus )
+		{
+			dblAver += plsTemp.getHappiness();
+		}
+		dblAver = dblAver / intPlayerNum;
+		for ( PlayerStatus plsTemp : aplsPlayerStatus )
+		{
+			double dblTempHappy = plsTemp.getHappiness() + dblAver;
+			System.out.println( "Player #" + plsTemp.getPlayerIndex() + "'s happiness is: " + dblTempHappy );
+		}
+		
+		try {
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				abfwPortfolio[ intPlayerIndex ].close();
+				afrtPortfolio[ intPlayerIndex ].close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void logGame( BufferedWriter[] abfwPortfolio, String strLogWhat )
+	{
+		if ( strLogWhat.equals( "P" ) )
+		{
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				PlayerStatus plsTemp = aplsPlayerStatus[ intPlayerIndex ];
+				int[] aintInHand = plsTemp.getInHand();
+				for ( int intInHand : aintInHand )
+				{
+					try {
+						abfwPortfolio[ intPlayerIndex ].write( intInHand + "\t" );
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		else if ( strLogWhat.equals( "E" ) )
+		{
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				int[] aintCurrentEat;
+				if ( aintCurrentEats == null )
+				{
+					aintCurrentEat = new int[ intColorNum ];
+				}
+				else
+				{
+					aintCurrentEat = aintCurrentEats[ intPlayerIndex ];
+				}
+				for ( int intEat : aintCurrentEat )
+				{
+					try {
+						abfwPortfolio[ intPlayerIndex ].write( intEat + "\t" );
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		else if ( strLogWhat.equals( "N" ) )
+		{
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				try {
+					abfwPortfolio[ intPlayerIndex ].write( "\n" );
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		else if ( strLogWhat.equals( "O" ) )
+		{
+			int[][] aintSumOffExe = new int[ intPlayerNum ][ intColorNum ];
+			int[][] aintOffs = new int[ intPlayerNum ][ intColorNum ];
+			if ( aoffCurrentOffers != null )
+			{
+				for ( Offer offTemp : aoffCurrentOffers )
+				{
+					int[] aintOff = offTemp.getOffer();
+					int[] aintDesire = offTemp.getDesire();
+					int intOfferedByIndex = offTemp.getOfferedByIndex();
+					int intPickedByIndex = offTemp.getPickedByIndex();
+					for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+					{
+						aintOffs[ intOfferedByIndex ][ intColorIndex ] = aintOff[ intColorIndex ] - aintDesire[ intColorIndex ];
+					}
+					if ( !offTemp.getOfferLive() && offTemp.getPickedByIndex() != -1 )
+					{
+						for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+						{
+							aintSumOffExe[ intOfferedByIndex ][ intColorIndex ] += aintDesire[ intColorIndex ] - aintOff[ intColorIndex ];
+							aintSumOffExe[ intPickedByIndex ][ intColorIndex ] += aintOff[ intColorIndex ] - aintDesire[ intColorIndex ];
+						}
+					}
+				}
+			}
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				int[] aintSumOffE = aintSumOffExe[ intPlayerIndex ];
+				int[] aintOff = aintOffs[ intPlayerIndex ];
+				for ( int intOff : aintOff )
+				{
+					try {
+						abfwPortfolio[ intPlayerIndex ].write( intOff + "\t" );
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				for ( int intSumOffE : aintSumOffE )
+				{
+					try {
+						abfwPortfolio[ intPlayerIndex ].write( intSumOffE + "\t" );
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		else if ( strLogWhat.equals( "H" ) )
+		{
+			for ( int intPlayerIndex = 0; intPlayerIndex < intPlayerNum; intPlayerIndex ++ )
+			{
+				PlayerStatus plsTemp = aplsPlayerStatus[ intPlayerIndex ];
+				double dblHappiness = plsTemp.getHappiness();
+				try {
+					abfwPortfolio[ intPlayerIndex ].write( dblHappiness + "\t" );
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	private double[] randomTastes(double dblMean) 
 	{
 		double[] adblRandomTastes = new double[ intColorNum ];
@@ -168,33 +342,33 @@ public class Game
 		return adblRandomTastes;
 	}
 
-/*
- 	* distribution of skittles in hand imp var: aintRandomInHand
- */
 	private int[] randomInHand(int intTotalNum) 
 	{
-		int[] aintRandomInHand = new int[ intColorNum ]; //distribution of skittles in hand ie number of skittles of each no
-		Random rdmTemp = new Random(); 
-		int[] aintTemp = new int[ intColorNum + 1 ];
-		aintTemp[ intColorNum ] = intTotalNum;
-		for ( int intColorIndex = 1; intColorIndex < intColorNum; intColorIndex ++ )
-		{
-			aintTemp[ intColorIndex ] = rdmTemp.nextInt( intTotalNum + 1 );
-		}
-		Arrays.sort( aintTemp );
-//		System.out.println( "RandomInHand: " );
-		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
-		{
-			aintRandomInHand[ intColorIndex ] = aintTemp[ intColorIndex + 1 ] - aintTemp[ intColorIndex ];
-//			System.out.print( aintRandomInHand[ intColorIndex ] + " " );
-		}
+		int[] aintRandomInHand = new int[ intColorNum ];
+//		Random rdmTemp = new Random();
+//		int[] aintTemp = new int[ intColorNum + 1 ];
+//		aintTemp[ intColorNum ] = intTotalNum;
+//		for ( int intColorIndex = 1; intColorIndex < intColorNum; intColorIndex ++ )
+//		{
+//			aintTemp[ intColorIndex ] = rdmTemp.nextInt( intTotalNum + 1 );
+//		}
+//		Arrays.sort( aintTemp );
+////		System.out.println( "RandomInHand: " );
+//		for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
+//		{
+//			aintRandomInHand[ intColorIndex ] = aintTemp[ intColorIndex + 1 ] - aintTemp[ intColorIndex ];
+////			System.out.print( aintRandomInHand[ intColorIndex ] + " " );
+//		}
 //		System.out.println();
+		Random rdmTemp = new Random();
+		for ( int intSkittleIndex = 0; intSkittleIndex < intTotalNum; intSkittleIndex ++ )
+		{
+			int intTemp = rdmTemp.nextInt( intColorNum );
+			aintRandomInHand[ intTemp ] ++;
+		}
 		return aintRandomInHand;
 	}
 
-	/*
-	 * ?? dunno?? doesnt look imp
-	 */
 	private String getTagValue( Element elmPlayer, String strTagName )
 	{
 		String strValue = null;
@@ -204,31 +378,6 @@ public class Game
 			strValue = elmTag.getFirstChild().getNodeValue();
 		}
 		return strValue;
-	}
-	
-	public void runGame()
-	{
-		// check whether there is still at least one player has more skittles to eat
-		
-		while ( !checkFinish() )
-		{
-			showEveryInHand();			
-			everyoneEatAndOffer();
-			int[] aintOrder = generateRandomOfferPickOrder();			// need code to log the order for repeated game
-			pickOfferInOrder( aintOrder );
-			broadcastOfferExcution();
-		}
-		double dblAver = 0;
-		for ( PlayerStatus plsTemp : aplsPlayerStatus )
-		{
-			dblAver += plsTemp.getHappiness();
-		}
-		dblAver = dblAver / intPlayerNum;
-		for ( PlayerStatus plsTemp : aplsPlayerStatus )
-		{
-			double dblTempHappy = plsTemp.getHappiness() + dblAver;
-			System.out.println( "Player #" + plsTemp.getPlayerIndex() + "'s happiness is: " + dblTempHappy );
-		}
 	}
 	
 	private void showEveryInHand() 
@@ -284,6 +433,9 @@ public class Game
 			}
 			else
 			{
+				double dblHappinessUp = aplsPlayerStatus[ intPlayerIndex ].randEat( aintTempEat );
+				alEats.add( aintTempEat );
+				aplyPlayers[ intPlayerIndex ].happier( dblHappinessUp );
 				System.out.println( "Player #" + intPlayerIndex + ": You cannot eat these. Take them out of your mouth!" );
 			}
 			// process offer
@@ -295,8 +447,11 @@ public class Game
 			else
 			{
 				System.out.println( "Player #" + intPlayerIndex + ": Invalid offer. Shame on you :)" );
+				Offer offEmpty = new Offer( intPlayerIndex, intColorNum );
+				alCurrentOffers.add( offEmpty );
 			}
 		}
+		aintCurrentEats = alEats.toArray( new int[ 0 ][] );
 		aoffCurrentOffers = alCurrentOffers.toArray( new Offer[ 0 ] );
 		
 		System.out.println( "******************************************" );
@@ -361,9 +516,13 @@ public class Game
 				{
 					System.out.println( "Offer has been picked, forget about it" );
 				}
-				if ( !aplsPlayerStatus[ intPlayerIndex ].checkEnoughInHand( offPicked.getDesire() ) )
+				else if ( !aplsPlayerStatus[ intPlayerIndex ].checkEnoughInHand( offPicked.getDesire() ) )
 				{
 					System.out.println( "Player #" + intPlayerIndex + ": you don't have enough skittles to accept this offer. Don't even think about it!" );
+				}
+				else if ( intPlayerIndex == offPicked.getOfferedByIndex() )
+				{
+					System.out.println( "Trade with yourself? Schizophrenia..." );
 				}
 				else
 				{
