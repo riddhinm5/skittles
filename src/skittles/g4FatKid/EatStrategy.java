@@ -54,7 +54,7 @@ public class EatStrategy {
 			// after for loop, minIndex should be the index of the smallest non-zero color
 			intLastEatIndex = minIndex;
 			// eat one of this min color
-			whatToEatNow[intLastEatIndex] = 1;
+			whatToEatNow[intLastEatIndex] = 1; //bug here
 			return whatToEatNow;
 		}
 		
