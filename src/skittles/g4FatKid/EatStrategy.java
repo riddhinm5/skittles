@@ -67,8 +67,9 @@ public class EatStrategy {
 				if (aintInHand[i] > 0) colorCount++;
 			}
 			
-			// if we only have one color left in our hand, eat all of them
-			if (colorCount == 1 ) {
+			int colorsToHoard = 2; // this is the number of colors to hoard
+			// if we only colors we are hoarding left in our hand, eat all of them
+			if (colorCount <= colorsToHoard ) {
 				for (int i = 0; i < intColorNum; i++) {
 					if (aintInHand[i] != 0) {
 						whatToEatNow[i] = aintInHand[i];
