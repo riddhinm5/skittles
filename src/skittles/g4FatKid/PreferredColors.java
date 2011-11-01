@@ -21,10 +21,13 @@ public class PreferredColors {
 	/*
 	 * takes an array as input.  The array is the number of skittles for each color in our hand.
 	 * returns true if all preferences are known for aintInHand, false otherwise
+	 * ranks[i] == -1
 	 */
 	public boolean allPreferencesKnown(int[] aintInHand) {
 		for (int i = 0; i < numColors; i++) {
-			if (aintInHand[i] != 0 && ranks[i] == -1) return false;
+			if (aintInHand[i] != 0 && !doesRankExist(i)){ 
+				return false;
+			}
 		}
 		return true;
 	}
@@ -182,5 +185,14 @@ public class PreferredColors {
 	 */
 	public int getMedian() {
 		return median;
+	}
+	
+	
+	public boolean doesRankExist(int colorNumber){
+		for(int i=0; i < numColors ;i++){
+			if(ranks[i]== colorNumber)
+				return true;
+		}
+		return false;
 	}
 }
