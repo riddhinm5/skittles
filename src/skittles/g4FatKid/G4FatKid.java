@@ -9,6 +9,7 @@ public class G4FatKid extends Player {
 	double happiness;
 	String className;
 	int playerIndex;
+	int playerNum;
 
 	private double[] tasteArray;
 	private int lastEatIndex;
@@ -205,9 +206,9 @@ public class G4FatKid extends Player {
 	}
 
 	@Override
-	public void initialize(int playerIndex, String className,
-			int[] aintInHand) {
-		// TODO Auto-generated method stub
+	public void initialize(int playerNum, int playerIndex, String className, int[] aintInHand) {
+
+		this.playerNum = playerNum;
 		this.playerIndex = playerIndex;
 		this.className = className;
 		this.skittleBalanceArray = aintInHand;
