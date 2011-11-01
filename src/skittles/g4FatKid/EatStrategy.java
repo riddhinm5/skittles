@@ -51,26 +51,28 @@ class EatStrategy{
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
 		int j;
-		if (!prefs.allPreferencesKnown() && rounds<aintInHand.length-1) {
+		if (!prefs.allPreferencesKnown() && rounds < aintInHand.length - 1) {
 			// find color with smallest amount from the colors we still don't know
 			for (j = 0; j < aintInHand.length; j++) {
 				// only if taste of color j is unknown
-				if(colorTasted.isEmpty() | !colorTasted.contains(j) && aintInHand[j] !=0){
+				if(colorTasted.isEmpty() || !colorTasted.contains(j) && aintInHand[j] != 0) {
 					intLastEatIndex = j;
 					whatToEatNow[intLastEatIndex] = 1;
 					colorTasted.add(j);
 					break;
 				}
-				else if(aintInHand[j] == 0 && j==aintInHand.length-1)
-					for(int l=0;l<aintInHand.length;l++)
-						if(aintInHand[l] != 0){
+				else if (aintInHand[j] == 0 && j == aintInHand.length-1) {
+					for (int l = 0; l < aintInHand.length; l++) {
+						if (aintInHand[l] != 0) {
 							intLastEatIndex = l;
 							whatToEatNow[l] = 1;
 							break;
-							}	
-		}
+						}
+					}
+				}
+			}
 			rounds++;
-	}
+		}
 			// after for loop, minIndex should be the index of the smallest non-zero color
 		//	intLastEatIndex = minIndex;
 			// eat one of this min color
