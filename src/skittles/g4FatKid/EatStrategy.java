@@ -62,10 +62,10 @@ public class EatStrategy {
 		// else, all preferences are known, and we can move to phase 2:
 		// this phase goes until only one color is left
 		else {
-			// check if only one color is remaining in our hand
+			// check number of colors remaining in our hand
 			int colorCount = 0;
 			for (int i = 0; i < intColorNum; i++) {
-				if (aintInHand[i] != 0) colorCount++;
+				if (aintInHand[i] > 0) colorCount++;
 			}
 			
 			// if we only have one color left in our hand, eat all of them
