@@ -40,12 +40,11 @@ public class EatStrategy {
 
 		// Rounds to taste each of the skittles to check if we like them
 		// if some preferences are still unknown...
-		if (!prefs.allPreferencesKnown()) {
+		if (!prefs.allPreferencesKnown(aintInHand)) {
 			// find color with smallest amount from the colors we still don't know
 			for (int j = 0; j < intColorNum; j++) {
 				// only if taste of color j is unknown
 				if (prefs.getRankOfColor(j) == -1) {
-					System.out.println("here");
 					if (aintInHand[j] < min && aintInHand[j] > 0) {
 						min = aintInHand[j];
 						minIndex = j;
@@ -86,6 +85,16 @@ public class EatStrategy {
 						return whatToEatNow;
 					}
 				}
+				// if we get here, all colors below median have been traded/eaten
+				// so, eat one of color with the least amount in our hand
+				for (int i = 0; i < intColorNum; i++) {
+					if (aintInHand[i] < min && aintInHand[i] > 0) {
+						min = aintInHand[i];
+						minIndex = i;
+					}
+				}
+				whatToEatNow[minIndex] = 1;
+				return whatToEatNow;
 			}
 		}
 		return whatToEatNow;

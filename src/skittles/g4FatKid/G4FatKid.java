@@ -121,7 +121,7 @@ public class G4FatKid extends Player {
 			// print the tastes of each color
 			preferredColors.printTastes();
 			// print the median happiness color
-			System.out.println("Median color is " + preferredColors.getMedian());
+			System.out.println("Median color is " + preferredColors.getMedianElement());
 		}
 	}
 

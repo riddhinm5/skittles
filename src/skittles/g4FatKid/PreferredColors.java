@@ -19,11 +19,12 @@ public class PreferredColors {
 	}
 	
 	/*
-	 * returns true if all preferences are known, false otherwise
+	 * takes an array as input.  The array is the number of skittles for each color in our hand.
+	 * returns true if all preferences are known for aintInHand, false otherwise
 	 */
-	public boolean allPreferencesKnown() {
+	public boolean allPreferencesKnown(int[] aintInHand) {
 		for (int i = 0; i < numColors; i++) {
-			if (ranks[i] == -1) return false;
+			if (aintInHand[i] != 0 && ranks[i] == -1) return false;
 		}
 		return true;
 	}
