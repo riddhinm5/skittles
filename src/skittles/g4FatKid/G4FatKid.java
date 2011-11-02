@@ -20,8 +20,11 @@ public class G4FatKid extends Player {
 	private boolean endOfGame;
 	private int maxNullOfferRounds;
 	private int streakOfNullOffers;
+	private int maxNoTradesExecuted;
+	private int streakOfNoTrades;
+	
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = true;
+	boolean verbose = false;
 	boolean desiredResult = false;
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -203,21 +206,23 @@ public class G4FatKid extends Player {
 					+ preferredColors.getMedianElement());
 		}
 	}
-
+	
 	@Override
 	public Offer pickOffer(Offer[] currentOffers) {
 
+		boolean allNullOffers = true;
 		Offer offReturn = null;
 		for (Offer offTemp : currentOffers) {
-			if (offTemp.getOfferedByIndex() == playerIndex
-					|| offTemp.getOfferLive() == false)
+			if (offTemp.getOfferedByIndex() == playerIndex || offTemp.getOfferLive() == false)
 				continue;
 			int[] skittlesLost = offTemp.getDesire();
+			for (int i = 0; i < numberOfColors; i++) {
+				if (skittlesLost[i] != 0) allNullOffers = false;
+			}
 			// first, check if we can even fulfill the offer
 			if (checkEnoughInHand(skittlesLost)) {
 				int[] skittlesGained = offTemp.getOffer();
-				if (preferredColors.checkIfGoodOffer(skittlesLost,
-						skittlesGained)) {
+				if (preferredColors.checkIfGoodOffer(skittlesLost, skittlesGained)) {
 					offReturn = offTemp;
 					for (int intColorIndex = 0; intColorIndex < numberOfColors; intColorIndex++) {
 						skittleBalanceArray[intColorIndex] += skittlesGained[intColorIndex]
@@ -228,6 +233,14 @@ public class G4FatKid extends Player {
 					continue;
 			}
 		}
+		// if all the offers are null, increment the streak count
+		if (allNullOffers) streakOfNullOffers++;
+		// else, reset the count to zero
+		else streakOfNullOffers = 0;
+		
+		// check if the streak surpassed the threshold, and set endOfGame if it has
+		if (streakOfNullOffers > maxNullOfferRounds) endOfGame = true;
+		
 		if (verbose) {
 			if (offReturn != null) {
 				System.out.println("Offer taken");
@@ -256,10 +269,12 @@ public class G4FatKid extends Player {
 	@Override
 	public void updateOfferExe(Offer[] currentOffersArray) {
 
+		boolean noExecutedOffers = true;
 		// update opponentProfiles with the new transactions
 		for (Offer offer : currentOffersArray) {
 
 			if (offer.getPickedByIndex() != -1) {
+				noExecutedOffers = false;
 				int[] aintTempOffer = offer.getOffer();
 				int[] aintTempDesire = offer.getDesire();
 				// update the offerer and accepter's profiles (note the switched
@@ -285,6 +300,14 @@ public class G4FatKid extends Player {
 			market.printRankings();
 			market.printSupplyTable();
 		}
+		
+		// update count of streaks of no trades
+		if (noExecutedOffers) streakOfNoTrades++;
+		// else, reset the count to zero
+		else streakOfNullOffers = 0;
+		
+		// check if the streak surpassed the threshold, and set endOfGame if it has
+		if (streakOfNoTrades > maxNoTradesExecuted) endOfGame = true;
 
 	}
 
@@ -322,9 +345,12 @@ public class G4FatKid extends Player {
 
 		// create Market object
 		market = new Market(numberOfColors);
+		
 		endOfGame = false;
 		maxNullOfferRounds = 3;
 		streakOfNullOffers = 0;
+		maxNoTradesExecuted = 5;
+		streakOfNoTrades = 0;
 
 	}
 

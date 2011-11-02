@@ -46,7 +46,7 @@ public class EatStrategy {
 			for (int j = 0; j < intColorNum; j++) {
 				// only if taste of color j is unknown
 				if (prefs.getRankOfColor(j) == -1) {
-					if (aintInHand[j]>max  && aintInHand[j] > 0) {
+					if (aintInHand[j] > max  && aintInHand[j] > 0) {
 						max = aintInHand[j];
 						minIndex = j;
 					}
@@ -68,14 +68,21 @@ public class EatStrategy {
 				if (aintInHand[i] > 0) colorCount++;
 			}
 
-			int colorsToHoard = 2; // this is the number of colors to hoard
+			int colorsToHoard = 2; // this is the number of colors to hoard 
+			// TODO change colorToHoard to parameter based on numPlayers and numColors
 			// if it's the end of the game, then we can eat all piles as quickly as possible
 			if (endOfGame) colorsToHoard = intColorNum;
-			// if we only colors we are hoarding left in our hand, eat all of them
+			// if only colors we are hoarding are left in our hand, eat all of them
 			if (colorCount <= colorsToHoard ) {
 				for (int i = 0; i < intColorNum; i++) {
 					if (aintInHand[i] != 0) {
-						whatToEatNow[i] = aintInHand[i];
+						// ensure that the pile is a positive taste color
+						// if it's positive valued, eat the pile
+						if (prefs.returnTaste(i) > 0)
+							whatToEatNow[i] = aintInHand[i];
+						// if it's negative valued, eat them one-by-one
+						else
+							whatToEatNow[i] = 1;
 						return whatToEatNow;
 					}
 				}
