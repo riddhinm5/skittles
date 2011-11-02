@@ -21,6 +21,7 @@ public class PreferredColors {
 	/*
 	 * takes an array as input.  The array is the number of skittles for each color in our hand.
 	 * returns true if all preferences are known for aintInHand, false otherwise
+	 * 
 	 * ranks[i] == -1
 	 */
 	public boolean allPreferencesKnown(int[] aintInHand) {
@@ -100,6 +101,7 @@ public class PreferredColors {
 		return ranks[rank];
 	}
 	
+	
 	/*
 	 * takes input of color, returns the rank of this color
 	 * if color is unknown, returns -1
@@ -147,26 +149,21 @@ public class PreferredColors {
 		// "nothing gained worst than median, nothing lost better than median"
 		boolean toBeGained = false;
 		boolean toBeLost = false;
+		
 		for (int i = 0; i < numColors; i++) {
-			for (int j = 0; j < median; j++) {
-				if (skittlesToGain[i] != 0 && i == ranks[j]) {
-					toBeGained = true;
-					break;
-				}
-			}
-			if (toBeGained)
+			if((skittlesToGain[i]!=0 && getRankOfColor(i)<median && getRankOfColor(i)!=-1)){
+				toBeGained=true;
 				break;
+			}
 		}
+		
 		for (int i = 0; i < numColors; i++) {
-			for (int j = numColors - 1; j > median; j--) {
-				if (skittlesToLose[i] != 0 && (i == ranks[j]||ranks[j]==-1)) {
-					toBeLost = true;
-					break;
-				}
-			}
-			if (toBeLost)
+			if(skittlesToLose[i]!=0 && (getRankOfColor(i)==-1||getRankOfColor(i)>=median)){ 
+				toBeLost=true;
 				break;
+			}
 		}
+		
 		if (toBeGained && toBeLost)
 			return true;
 		else

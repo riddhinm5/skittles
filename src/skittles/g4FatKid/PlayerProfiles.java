@@ -33,7 +33,24 @@ public class PlayerProfiles {
 		}
 		return sum;
 	}
+	
+	public int getDemand(int color){
+		int sum = 0;
+		for (int j = 0; j < numPlayers; j++) {
+			if (netTrades[j][color] > 0)
+				sum += netTrades[j][color];
+		}
+		return sum;
+	}
 
+	public int getSupply(int color){
+		int sum = 0;
+		for (int j = 0; j < numPlayers; j++) {
+			if (netTrades[j][color] < 0)
+				sum += (-netTrades[j][color]);
+		}
+		return sum;
+	}
 	public void printProfiles() {
 
 		for (int i = 0; i < numPlayers; i++) {

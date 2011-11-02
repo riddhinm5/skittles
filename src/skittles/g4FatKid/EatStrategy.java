@@ -36,6 +36,7 @@ public class EatStrategy {
 		}
 		int[] whatToEatNow = new int[intColorNum];
 		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
 		int minIndex = -1;
 
 		// Rounds to taste each of the skittles to check if we like them
@@ -45,8 +46,8 @@ public class EatStrategy {
 			for (int j = 0; j < intColorNum; j++) {
 				// only if taste of color j is unknown
 				if (prefs.getRankOfColor(j) == -1) {
-					if (aintInHand[j] < min && aintInHand[j] > 0) {
-						min = aintInHand[j];
+					if (aintInHand[j]>max  && aintInHand[j] > 0) {
+						max = aintInHand[j];
 						minIndex = j;
 					}
 				}
