@@ -68,7 +68,7 @@ public class EatStrategy {
 				if (aintInHand[i] > 0) colorCount++;
 			}
 
-			int colorsToHoard = 2; // this is the number of colors to hoard 
+			int colorsToHoard = intColorNum / 2 + 1; // this is the number of colors to hoard 
 			// TODO change colorToHoard to parameter based on numPlayers and numColors
 			// if it's the end of the game, then we can eat all piles as quickly as possible
 			if (endOfGame) colorsToHoard = intColorNum;
