@@ -3,7 +3,7 @@ package skittles.g4FatKid;
 import skittles.sim.Offer;
 import skittles.sim.Player;
 
-public class G4FatKid extends Player {
+public class G4SmartEater extends Player {
 	private int[] skittleBalanceArray;
 	private int numberOfColors;
 	double happiness;
@@ -22,9 +22,9 @@ public class G4FatKid extends Player {
 	private int streakOfNullOffers;
 	private int maxNoTradesExecuted;
 	private int streakOfNoTrades;
-	
+
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = false;
+	boolean verbose = true;
 	boolean desiredResult = false;
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -63,9 +63,9 @@ public class G4FatKid extends Player {
 		int mostUndesired = -1;
 		int[] aintOffer = new int[numberOfColors];
 		int[] aintDesire = new int[numberOfColors];
-		
+
 		if (!isTasteKnowledgeSufficient()) {
-			
+
 			for (int i = 0; i < numberOfColors; i++) {
 				if (tasteArray[i] != -2.0) {
 					if (tasteArray[i] < lowerThreshold) {
@@ -78,22 +78,18 @@ public class G4FatKid extends Player {
 				}
 			}
 			for (int i = 0; i < numberOfColors; i++) {
-				if(desiredResult)break;
+				if (desiredResult)
+					break;
 				aintOffer[i] = 0;
 				aintDesire[i] = 0;
 				if (mostDesired == i && skittleBalanceArray[i] > 0) {
 					for (int j = 0; j < numberOfColors; j++) {
 						if (j != mostDesired && skittleBalanceArray[j] > 0) {
-							if(skittleBalanceArray[mostDesired]>skittleBalanceArray[j])
-							aintDesire[i] = Math.min(
-									skittleBalanceArray[mostDesired],
-									skittleBalanceArray[j]);
-							else
-								aintDesire[i] = Math.max(
-										skittleBalanceArray[mostDesired],
-										skittleBalanceArray[j]);
+							aintDesire[i] = skittleBalanceArray[j] / 2;
+							// aintDesire[i] = Math.min(skittleBalanceArray[j],
+							// 3);
 							aintOffer[j] = aintDesire[i];
-							desiredResult=true;
+							desiredResult = true;
 							break;
 						}
 					}
@@ -101,16 +97,14 @@ public class G4FatKid extends Player {
 				if (mostUndesired == i && skittleBalanceArray[i] > 0) {
 					for (int j = 0; j < numberOfColors; j++) {
 						if (j != mostDesired && skittleBalanceArray[j] > 0) {
-							aintOffer[i] = Math.max(
-									skittleBalanceArray[mostUndesired],
-									skittleBalanceArray[j]);
+							aintOffer[i] = skittleBalanceArray[j]/2;
 							aintDesire[j] = aintOffer[i];
 							break;
 						}
 					}
 				}
 			}
-			
+
 		} else {
 			// what is desired: first match between personal prefs (from top
 			// down) and rankings from Market
@@ -121,12 +115,25 @@ public class G4FatKid extends Player {
 			mostUndesired = Integer.MAX_VALUE;
 			int desireQuotient = -1;
 			int offerQuotient = Integer.MIN_VALUE;
-			for (int i = 0; i < numberOfColors; i++) {
-				if (market.getSupplyRanking(i) != -1
-						&& preferredColors.getRankOfColor(i) != -1) {
-					if ((preferredColors.getRankOfColor(i) <preferredColors.getMedian()) &&(market.getSupplyRanking(i)>desireQuotient) ) {
-						desireQuotient = market.getSupplyRanking(i) ;
-						mostDesired = i;
+			int bestRank = Integer.MAX_VALUE;
+			if (!isTasteBaseCompelete()) {
+				for (int i = 0; i < numberOfColors; i++) {
+					if (preferredColors.getRankOfColor(i) != -1) {
+						if (preferredColors.getRankOfColor(i) < bestRank) {
+							bestRank = preferredColors.getRankOfColor(i);
+							mostDesired = i;
+						}
+					}
+				}
+			} else {
+				for (int i = 0; i < numberOfColors; i++) {
+					if (preferredColors.getRankOfColor(i) != -1) {
+						if ((preferredColors.getRankOfColor(i) < preferredColors
+								.getMedian())
+								&& (market.getSupplyRanking(i) > desireQuotient)) {
+							desireQuotient = market.getSupplyRanking(i);
+							mostDesired = i;
+						}
 					}
 				}
 			}
@@ -134,33 +141,39 @@ public class G4FatKid extends Player {
 			// what is offered: first match between personal prefs (from bottom
 			// up)
 			// and rankings from Market
-			int max = Integer.MIN_VALUE;
+			int max = 0;
 			for (int i = 0; i < numberOfColors; i++) {
 				if (preferredColors.getRankOfColor(i) == -1
 						|| preferredColors.getRankOfColor(i) >= preferredColors
 								.getMedian()) {
 					int temp = preferredColors.getRankOfColor(i);
-					if (((temp==-1|| temp > offerQuotient) && i != mostDesired) && skittleBalanceArray[i]> max ) {
+					if (((temp == -1 || temp > offerQuotient) && i != mostDesired)
+							&& skittleBalanceArray[i] > max) {
 						offerQuotient = temp;
 						mostUndesired = i;
-						max=skittleBalanceArray[i];
+						max = skittleBalanceArray[i];
 					}
 				}
 			}
-			desiredResult=false;
+			desiredResult = false;
 			for (int i = 0; i < numberOfColors; i++) {
-				if(desiredResult)break;
+				if (desiredResult)
+					break;
 				aintOffer[i] = 0;
 				aintDesire[i] = 0;
-				if (mostDesired == i && skittleBalanceArray[i] > 0){
-					for(int j=0;j<numberOfColors;j++){
-						if(mostUndesired ==j && skittleBalanceArray[j]>0){
-							if(skittleBalanceArray[mostUndesired]>skittleBalanceArray[mostDesired])
-								aintDesire[i] = Math.max(skittleBalanceArray[mostDesired],skittleBalanceArray[mostUndesired]);
-							else
-								aintDesire[i] = Math.min(skittleBalanceArray[mostDesired],skittleBalanceArray[mostUndesired]);
-							aintOffer[j]=aintDesire[i];
-							desiredResult=true;
+				if (mostDesired == i && skittleBalanceArray[i] > 0) {
+					for (int j = 0; j < numberOfColors; j++) {
+						if (mostUndesired == j && skittleBalanceArray[j] > 0) {
+							if (isTasteBaseCompelete()) {
+								aintDesire[i] = skittleBalanceArray[mostUndesired];
+							} else {
+								aintDesire[i] = Math.min(
+										skittleBalanceArray[mostUndesired],
+										skittleBalanceArray[mostUndesired] / 2);
+
+							}
+							aintOffer[j] = aintDesire[i];
+							desiredResult = true;
 							break;
 						}
 					}
@@ -169,8 +182,8 @@ public class G4FatKid extends Player {
 		}
 		// trade as many Undesired color as possible (at most 4) for Desired
 		// color
-		
-		offTemp.setOffer(aintOffer,aintDesire );
+
+		offTemp.setOffer(aintOffer, aintDesire);
 
 	}
 
@@ -206,23 +219,26 @@ public class G4FatKid extends Player {
 					+ preferredColors.getMedianElement());
 		}
 	}
-	
+
 	@Override
 	public Offer pickOffer(Offer[] currentOffers) {
 
 		boolean allNullOffers = true;
 		Offer offReturn = null;
 		for (Offer offTemp : currentOffers) {
-			if (offTemp.getOfferedByIndex() == playerIndex || offTemp.getOfferLive() == false)
+			if (offTemp.getOfferedByIndex() == playerIndex
+					|| offTemp.getOfferLive() == false)
 				continue;
 			int[] skittlesLost = offTemp.getDesire();
 			for (int i = 0; i < numberOfColors; i++) {
-				if (skittlesLost[i] != 0) allNullOffers = false;
+				if (skittlesLost[i] != 0)
+					allNullOffers = false;
 			}
 			// first, check if we can even fulfill the offer
 			if (checkEnoughInHand(skittlesLost)) {
 				int[] skittlesGained = offTemp.getOffer();
-				if (preferredColors.checkIfGoodOffer(skittlesLost, skittlesGained)) {
+				if (preferredColors.checkIfGoodOffer(skittlesLost,
+						skittlesGained)) {
 					offReturn = offTemp;
 					for (int intColorIndex = 0; intColorIndex < numberOfColors; intColorIndex++) {
 						skittleBalanceArray[intColorIndex] += skittlesGained[intColorIndex]
@@ -234,13 +250,17 @@ public class G4FatKid extends Player {
 			}
 		}
 		// if all the offers are null, increment the streak count
-		if (allNullOffers) streakOfNullOffers++;
+		if (allNullOffers)
+			streakOfNullOffers++;
 		// else, reset the count to zero
-		else streakOfNullOffers = 0;
-		
-		// check if the streak surpassed the threshold, and set endOfGame if it has
-		if (streakOfNullOffers > maxNullOfferRounds) endOfGame = true;
-		
+		else
+			streakOfNullOffers = 0;
+
+		// check if the streak surpassed the threshold, and set endOfGame if it
+		// has
+		if (streakOfNullOffers > maxNullOfferRounds)
+			endOfGame = true;
+
 		if (verbose) {
 			if (offReturn != null) {
 				System.out.println("Offer taken");
@@ -300,14 +320,18 @@ public class G4FatKid extends Player {
 			market.printRankings();
 			market.printSupplyTable();
 		}
-		
+
 		// update count of streaks of no trades
-		if (noExecutedOffers) streakOfNoTrades++;
+		if (noExecutedOffers)
+			streakOfNoTrades++;
 		// else, reset the count to zero
-		else streakOfNullOffers = 0;
-		
-		// check if the streak surpassed the threshold, and set endOfGame if it has
-		if (streakOfNoTrades > maxNoTradesExecuted) endOfGame = true;
+		else
+			streakOfNullOffers = 0;
+
+		// check if the streak surpassed the threshold, and set endOfGame if it
+		// has
+		if (streakOfNoTrades > maxNoTradesExecuted)
+			endOfGame = true;
 
 	}
 
@@ -345,7 +369,7 @@ public class G4FatKid extends Player {
 
 		// create Market object
 		market = new Market(numberOfColors);
-		
+
 		endOfGame = false;
 		maxNullOfferRounds = 3;
 		streakOfNullOffers = 0;
@@ -382,6 +406,18 @@ public class G4FatKid extends Player {
 				countOfDefinedTastes++;
 		}
 		if (countOfDefinedTastes > 1)
+			return true;
+		return false;
+	}
+
+	private boolean isTasteBaseCompelete() {
+		int countOfDefinedTastes = 0;
+		;
+		for (int i = 0; i < numberOfColors; i++) {
+			if (tasteArray[i] != -2.0)
+				countOfDefinedTastes++;
+		}
+		if (countOfDefinedTastes > (numberOfColors) / 2)
 			return true;
 		return false;
 	}
