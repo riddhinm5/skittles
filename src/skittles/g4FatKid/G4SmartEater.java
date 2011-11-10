@@ -37,7 +37,7 @@ public class G4SmartEater extends Player {
 	private int streakOfNoTrades;
 
 	// set verbose to false to suppress output of debug statements
-	boolean verbose = true;
+	boolean verbose = false;
 	boolean desiredResult = false;
 	// PlayerProfiles tracks net changes to all players
 	private PlayerProfiles opponentProfiles;
@@ -129,7 +129,9 @@ public class G4SmartEater extends Player {
 					aintDesire[mostDesired] = aintOffer[mostUndesired];
 				}
 			} else {
-				System.out.println("taste base complete");
+				if (verbose) {
+					System.out.println("taste base complete");
+				}
 				desiredResult = false;
 				for (int i = 0; i < numberOfKnownElements / 2; i++) {
 					for (int j = numberOfColors - 1; j >= numberOfKnownElements / 2; j--) {
@@ -336,7 +338,7 @@ public class G4SmartEater extends Player {
 		}
 
 		if (verbose) {
-			System.out.println("FatKid starts");
+			System.out.println("SmartEater starts");
 		}
 
 		// create PreferredColors object
@@ -363,7 +365,7 @@ public class G4SmartEater extends Player {
 
 	@Override
 	public String getClassName() {
-		return "g4FatKid";
+		return "g4SmartEater";
 	}
 
 	@Override

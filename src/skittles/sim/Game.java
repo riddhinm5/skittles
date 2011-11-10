@@ -27,6 +27,8 @@ public class Game
 	private Offer[] aoffCurrentOffers = null;
 	private int[][] aintCurrentEats = null;
 	
+	private double dblTasteMean;
+	
 	public static Scanner scnInput = new Scanner( System.in );
 	
 	public Game( String strXMLPath )
@@ -91,11 +93,12 @@ public class Game
 				else
 				{
 					double dblMean = Double.parseDouble( astrTastes[ 1 ] );
+					this.dblTasteMean = dblMean;
 					adblTastes = randomTastes( dblMean );
 					System.out.println( "Random color happiness:" );
 					for ( int intColorIndex = 0; intColorIndex < intColorNum; intColorIndex ++ )
 					{
-						System.out.print( adblTastes[ intColorIndex ] );
+						System.out.print( adblTastes[ intColorIndex ] + " " );
 					}
 					System.out.println();
 				}
@@ -136,7 +139,7 @@ public class Game
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				plyNew.initialize( intPlayerNum, i, strPlayerClass, aintInHand.clone() );
+				plyNew.initialize( intPlayerNum, dblTasteMean, i, strPlayerClass, aintInHand.clone() );
 				alPlayers.add( plyNew );
 				PlayerStatus plsTemp = new PlayerStatus( i, strPlayerClass, aintInHand.clone(), adblTastes.clone() );
 				alPlayerStatus.add( plsTemp );
@@ -180,15 +183,14 @@ public class Game
 			logGame( abfwPortfolio, "H" );
 			logGame( abfwPortfolio, "N" );
 		}
-		double dblAver = 0;
+		double dblTotal = 0;
 		for ( PlayerStatus plsTemp : aplsPlayerStatus )
 		{
-			dblAver += plsTemp.getHappiness();
+			dblTotal += plsTemp.getHappiness();
 		}
-		dblAver = dblAver / intPlayerNum;
 		for ( PlayerStatus plsTemp : aplsPlayerStatus )
 		{
-			double dblTempHappy = plsTemp.getHappiness() + dblAver;
+			double dblTempHappy = ( plsTemp.getHappiness() + ( dblTotal - plsTemp.getHappiness() ) / ( intPlayerNum - 1 ) ) / 2;
 			System.out.println( "Player #" + plsTemp.getPlayerIndex() + "'s happiness is: " + dblTempHappy );
 		}
 		
