@@ -72,7 +72,7 @@ public class EatStrategy {
 			}
 
 			//int colorsToHoard = 2;
-			int colorsToHoard = intColorNum/2 + 1; // this is the number of
+			int colorsToHoard = (intColorNum*3)/4 ; // this is the number of
 			// colors to hoard
 			// TODO change colorToHoard to parameter based on numPlayers and
 			// numColors

@@ -192,6 +192,7 @@ public class PreferredColors {
 	 * returns the rank of the media
 	 */
 	public int getMedian() {
+		
 		return median;
 	}
 

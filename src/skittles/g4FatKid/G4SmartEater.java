@@ -1,11 +1,24 @@
 package skittles.g4FatKid;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import skittles.sim.Offer;
 import skittles.sim.Player;
 
 public class G4SmartEater extends Player {
+
+	private int numberOfKnownElements = 0;
+	private boolean isLastTransactionSuccessful = false;
+	private int lastOfferedSkittle;
+	private SortedMap<Double, Integer> skittlesMap = new TreeMap<Double, Integer>();
 	private int[] skittleBalanceArray;
 	private int numberOfColors;
+	private int negativeIndex = -1;
 	double happiness;
 	String className;
 	int playerIndex;
@@ -59,130 +72,91 @@ public class G4SmartEater extends Player {
 
 	@Override
 	public void offer(Offer offTemp) {
+
 		int mostDesired = -1;
 		int mostUndesired = -1;
 		int[] aintOffer = new int[numberOfColors];
 		int[] aintDesire = new int[numberOfColors];
-
-		if (!isTasteKnowledgeSufficient()) {
-
-			for (int i = 0; i < numberOfColors; i++) {
-				if (tasteArray[i] != -2.0) {
-					if (tasteArray[i] < lowerThreshold) {
-						mostUndesired = i;
-						break;
-					} else if (tasteArray[i] > higherThreshold) {
-						mostDesired = i;
+		int colorPresent = onlyColorPresent();
+		// make the first offer only if u r sure that the only skittle you have
+		// tasted is above .9
+		if (colorPresent != negativeIndex) {
+			mostDesired = colorPresent;
+			if (tasteArray[colorPresent] > higherThreshold) {
+				for (int j = 0; j < numberOfColors; j++) {
+					if (j != mostDesired && skittleBalanceArray[j] > 0) {
+						aintDesire[mostDesired] = skittleBalanceArray[j] / 2;
+						aintOffer[j] = aintDesire[mostDesired];
+						desiredResult = true;
 						break;
 					}
 				}
 			}
-			for (int i = 0; i < numberOfColors; i++) {
-				if (desiredResult)
-					break;
-				aintOffer[i] = 0;
-				aintDesire[i] = 0;
-				if (mostDesired == i && skittleBalanceArray[i] > 0) {
-					for (int j = 0; j < numberOfColors; j++) {
-						if (j != mostDesired && skittleBalanceArray[j] > 0) {
-							aintDesire[i] = skittleBalanceArray[j] / 2;
-							// aintDesire[i] = Math.min(skittleBalanceArray[j],
-							// 3);
-							aintOffer[j] = aintDesire[i];
-							desiredResult = true;
-							break;
-						}
-					}
-				}
-				if (mostUndesired == i && skittleBalanceArray[i] > 0) {
-					for (int j = 0; j < numberOfColors; j++) {
-						if (j != mostDesired && skittleBalanceArray[j] > 0) {
-							aintOffer[i] = skittleBalanceArray[j]/2;
-							aintDesire[j] = aintOffer[i];
-							break;
-						}
-					}
-				}
-			}
-
 		} else {
-			// what is desired: first match between personal prefs (from top
-			// down) and rankings from Market
-			// desirability = (personal rank of color x) + (market volume rank
-			// of color x)
-			// will take color with minimum value
-			mostDesired = Integer.MIN_VALUE;
-			mostUndesired = Integer.MAX_VALUE;
+
 			int desireQuotient = -1;
 			int offerQuotient = Integer.MIN_VALUE;
 			int bestRank = Integer.MAX_VALUE;
+			// / go for a greedy approach when you don't know the tastes of all
+			// colors
 			if (!isTasteBaseCompelete()) {
-				for (int i = 0; i < numberOfColors; i++) {
-					if (preferredColors.getRankOfColor(i) != -1) {
-						if (preferredColors.getRankOfColor(i) < bestRank) {
-							bestRank = preferredColors.getRankOfColor(i);
-							mostDesired = i;
-						}
-					}
+				if (skittleBalanceArray[skittlesMap.get(skittlesMap.firstKey())] == 0) {
+					skittlesMap.remove(skittlesMap.firstKey());
 				}
-			} else {
-				for (int i = 0; i < numberOfColors; i++) {
-					if (preferredColors.getRankOfColor(i) != -1) {
-						if ((preferredColors.getRankOfColor(i) < preferredColors
-								.getMedian())
-								&& (market.getSupplyRanking(i) > desireQuotient)) {
-							desireQuotient = market.getSupplyRanking(i);
-							mostDesired = i;
-						}
-					}
-				}
-			}
-
-			// what is offered: first match between personal prefs (from bottom
-			// up)
-			// and rankings from Market
-			int max = 0;
-			for (int i = 0; i < numberOfColors; i++) {
-				if (preferredColors.getRankOfColor(i) == -1
-						|| preferredColors.getRankOfColor(i) >= preferredColors
-								.getMedian()) {
-					int temp = preferredColors.getRankOfColor(i);
-					if (((temp == -1 || temp > offerQuotient) && i != mostDesired)
-							&& skittleBalanceArray[i] > max) {
-						offerQuotient = temp;
-						mostUndesired = i;
-						max = skittleBalanceArray[i];
-					}
-				}
-			}
-			desiredResult = false;
-			for (int i = 0; i < numberOfColors; i++) {
-				if (desiredResult)
-					break;
-				aintOffer[i] = 0;
-				aintDesire[i] = 0;
-				if (mostDesired == i && skittleBalanceArray[i] > 0) {
-					for (int j = 0; j < numberOfColors; j++) {
-						if (mostUndesired == j && skittleBalanceArray[j] > 0) {
-							if (isTasteBaseCompelete()) {
-								aintDesire[i] = skittleBalanceArray[mostUndesired];
-							} else {
-								aintDesire[i] = Math.min(
-										skittleBalanceArray[mostUndesired],
-										skittleBalanceArray[mostUndesired] / 2);
-
-							}
-							aintOffer[j] = aintDesire[i];
-							desiredResult = true;
+				mostUndesired = skittlesMap.get(skittlesMap.firstKey());
+				if (!isLastTransactionSuccessful
+						&& lastOfferedSkittle == mostUndesired) {
+					for (Map.Entry<Double, Integer> entry : skittlesMap
+							.entrySet()) {
+						System.out.println(entry.getKey());
+						System.out.println(entry.getValue());
+						if (lastOfferedSkittle != entry.getValue()) {
+							mostUndesired = entry.getValue();
 							break;
 						}
 					}
 				}
+				mostDesired = skittlesMap.get(skittlesMap.lastKey());
+				if (tasteArray[mostDesired] >= 0.0) {
+
+					/*
+					 * aintOffer[mostUndesired] = Math.min(
+					 * skittleBalanceArray[mostUndesired],
+					 * skittleBalanceArray[mostUndesired] / 2);
+					 */
+
+					aintOffer[mostUndesired] = skittleBalanceArray[mostUndesired];
+					aintDesire[mostDesired] = aintOffer[mostUndesired];
+				}
+			} else {
+				System.out.println("taste base complete");
+				desiredResult = false;
+				for (int i = 0; i < numberOfKnownElements / 2; i++) {
+					for (int j = numberOfColors - 1; j >= numberOfKnownElements / 2; j--) {
+						if (preferredColors.getColorAtRank(j) != -1
+								&& skittleBalanceArray[preferredColors
+										.getColorAtRank(j)] > 0) {
+							int numberPossible = opponentProfiles
+									.isOfferFeasible(playerNum,
+											this.playerIndex,
+											preferredColors.getColorAtRank(j),
+											preferredColors.getColorAtRank(i));
+							if (numberPossible != -1) {
+								aintOffer[preferredColors.getColorAtRank(j)] = numberPossible;
+								aintDesire[preferredColors.getColorAtRank(i)] = numberPossible;
+								desiredResult = true;
+								break;
+							}
+						}
+					}
+					if (desiredResult)
+						break;
+
+				}
+
 			}
 		}
-		// trade as many Undesired color as possible (at most 4) for Desired
-		// color
-
+		lastOfferedSkittle = mostUndesired;
 		offTemp.setOffer(aintOffer, aintDesire);
 
 	}
@@ -195,9 +169,11 @@ public class G4SmartEater extends Player {
 
 	@Override
 	public void happier(double dblHappinessUp) {
+		numberOfKnownElements++;
 		double dblHappinessPerCandy = dblHappinessUp / Math.pow(lastEatNum, 2);
 		if (tasteArray[lastEatIndex] == -2) {
 			tasteArray[lastEatIndex] = dblHappinessPerCandy;
+			skittlesMap.put(dblHappinessPerCandy, lastEatIndex);
 			// update ranks in adblTastRanks (takes n^2 time)
 			preferredColors.rerank(tasteArray);
 			eatStrategy.updatePrefs(preferredColors);
@@ -290,9 +266,14 @@ public class G4SmartEater extends Player {
 	public void updateOfferExe(Offer[] currentOffersArray) {
 
 		boolean noExecutedOffers = true;
+		isLastTransactionSuccessful = false;
 		// update opponentProfiles with the new transactions
 		for (Offer offer : currentOffersArray) {
-
+			if (offer.getPickedByIndex() != -1
+					&& offer.getOfferedByIndex() == this.playerIndex) {
+				System.out.println("my offer got accepted");
+				isLastTransactionSuccessful = true;
+			}
 			if (offer.getPickedByIndex() != -1) {
 				noExecutedOffers = false;
 				int[] aintTempOffer = offer.getOffer();
@@ -338,9 +319,10 @@ public class G4SmartEater extends Player {
 	@Override
 	public void initialize(int playerNum, int playerIndex, String className,
 			int[] aintInHand) {
-
+		this.lastOfferedSkittle = -1;
+		this.isLastTransactionSuccessful = true;
 		this.lowerThreshold = 0.0;
-		this.higherThreshold = 0.5;
+		this.higherThreshold = 0.9;
 		this.playerNum = playerNum;
 		this.playerIndex = playerIndex;
 		this.className = className;
@@ -365,7 +347,8 @@ public class G4SmartEater extends Player {
 				preferredColors);
 
 		// create PlayerProfile object
-		opponentProfiles = new PlayerProfiles(playerNum, numberOfColors);
+		opponentProfiles = new PlayerProfiles(playerNum, numberOfColors,
+				skittleBalanceArray);
 
 		// create Market object
 		market = new Market(numberOfColors);
@@ -397,27 +380,31 @@ public class G4SmartEater extends Player {
 		return true;
 	}
 
-	// really basic function written to written false when
-	// taste of only color is known ..else return true
-	private boolean isTasteKnowledgeSufficient() {
+	// to check if this is the first round
+	private Integer onlyColorPresent() {
 		int countOfDefinedTastes = 0;
+		int unKnownColor = -1;
+		int knownColor = 0;
 		for (int i = 0; i < numberOfColors; i++) {
-			if (tasteArray[i] != -2.0)
+			if (tasteArray[i] != -2.0 && countOfDefinedTastes <= 2) {
+				knownColor = i;
 				countOfDefinedTastes++;
+			}
 		}
-		if (countOfDefinedTastes > 1)
-			return true;
-		return false;
+		if (countOfDefinedTastes < 2)
+			return knownColor;
+		return unKnownColor;
 	}
 
+	// to check if the taste base can be considered to be complete
 	private boolean isTasteBaseCompelete() {
 		int countOfDefinedTastes = 0;
-		;
+
 		for (int i = 0; i < numberOfColors; i++) {
 			if (tasteArray[i] != -2.0)
 				countOfDefinedTastes++;
 		}
-		if (countOfDefinedTastes > (numberOfColors) / 2)
+		if (countOfDefinedTastes > (numberOfColors * 3) / 4)
 			return true;
 		return false;
 	}

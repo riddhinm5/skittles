@@ -4,16 +4,17 @@ public class PlayerProfiles {
 
 	// netTrades[x][y] = net change for player x of candies with color y
 	private int[][] netTrades;
+	private int[] skittleBalance;
 	private int numPlayers;
 	private int numColors;
 
-	public PlayerProfiles(int numPlayers, int numColors) {
+	public PlayerProfiles(int numPlayers, int numColors, int[] skittleBalance) {
 		netTrades = new int[numPlayers][numColors];
 		this.numPlayers = numPlayers;
 		this.numColors = numColors;
+		this.skittleBalance = skittleBalance;
 	}
 
-	
 	public void updatePlayer(int player, int[] offerArray, int[] desireArray) {
 
 		for (int i = 0; i < numColors; i++) {
@@ -33,8 +34,8 @@ public class PlayerProfiles {
 		}
 		return sum;
 	}
-	
-	public int getDemand(int color){
+
+	public int getDemand(int color) {
 		int sum = 0;
 		for (int j = 0; j < numPlayers; j++) {
 			if (netTrades[j][color] > 0)
@@ -43,7 +44,7 @@ public class PlayerProfiles {
 		return sum;
 	}
 
-	public int getSupply(int color){
+	public int getSupply(int color) {
 		int sum = 0;
 		for (int j = 0; j < numPlayers; j++) {
 			if (netTrades[j][color] < 0)
@@ -51,6 +52,7 @@ public class PlayerProfiles {
 		}
 		return sum;
 	}
+
 	public void printProfiles() {
 
 		for (int i = 0; i < numPlayers; i++) {
@@ -61,5 +63,20 @@ public class PlayerProfiles {
 			System.out.println();
 		}
 	}
-	
+
+	public int isOfferFeasible(int playerNum, int player, int offer,
+			int desire) {
+		int max=-1;
+		int numberToBeOffered=0;
+		for (int i = 0; i < playerNum; i++) {
+			if (i != player) {
+				if (netTrades[i][offer] < 0 && netTrades[i][desire] > 0) {
+					if(netTrades[i][desire]>max)
+						max=netTrades[i][desire];
+				}
+			}
+		}
+		return Math.min(max, skittleBalance[offer]);
+	}
+
 }
